@@ -1,6 +1,6 @@
 ﻿<template>
 
-  <div class="docs-container">
+  <div class="docs-container docs-page">
 
     <!-- 域名授权验证提示 - 如果不需要域名授权功能，移除此组件即可 -->
 

@@ -3030,29 +3030,23 @@ body.dark-theme .top-toolbar .theme-toggle {
 }
 
 /* Final page-specific overrides: keep docs centered after the global theme rules. */
-@supports selector(.content-area:has(.docs-container)) {
-  .content-area:has(> .view-wrapper > .docs-container) {
-    width: min(1200px, calc(100% - 32px)) !important;
-    max-width: 1200px !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-}
-
-.docs-container {
-  width: 100% !important;
+.docs-page {
+  position: relative;
+  left: 50%;
+  width: min(1200px, calc(100vw - 32px)) !important;
   max-width: 1200px !important;
-  margin: 0 auto !important;
+  margin: 0 !important;
   padding: 0 !important;
+  transform: translateX(-50%);
 }
 
-.docs-inner {
+.docs-page .docs-inner {
   width: 100% !important;
-  max-width: 1200px !important;
-  margin: 0 auto !important;
+  max-width: none !important;
+  margin: 0 !important;
 }
 
-.docs-container .welcome-card {
+.docs-page .welcome-card {
   display: block !important;
   margin: 0 0 28px !important;
   padding: 20px !important;
@@ -3062,17 +3056,23 @@ body.dark-theme .top-toolbar .theme-toggle {
   box-shadow: 0 8px 22px rgba(31, 49, 69, .07) !important;
 }
 
-.docs-container .welcome-card .card-header,
-.docs-container .welcome-card .card-body {
+.docs-page .welcome-card .card-header,
+.docs-page .welcome-card .card-body {
   padding: 0 !important;
 }
 
-.docs-container .welcome-card .card-header {
+.docs-page .welcome-card .card-header {
   margin-bottom: 12px !important;
 }
 
-.docs-container .docs-title {
+.docs-page .docs-title {
   display: none !important;
+}
+
+.docs-page .doc-items {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)) !important;
+  gap: 16px !important;
 }
 
 .account-container .rules-grid {
@@ -3087,9 +3087,8 @@ body.dark-theme .top-toolbar .theme-toggle {
 }
 
 @media (max-width: 700px) {
-  .content-area:has(> .view-wrapper > .docs-container) {
-    width: calc(100% - 24px) !important;
-    max-width: none !important;
+  .docs-page {
+    width: calc(100vw - 24px) !important;
   }
 
   .account-container .rules-grid {
