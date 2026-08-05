@@ -43,7 +43,7 @@
         <section class="elegant-card elegant-plan-card">
           <div class="elegant-card__head">
             <div>
-              <span class="elegant-label">{{ $t('dashboard.subscriptionInfo') }}</span>
+              <span class="elegant-label">套餐详情</span>
               <h2>{{ userPlan.name || $t('dashboard.noSubscription') }}</h2>
             </div>
             <span class="elegant-status" :class="{ danger: isExpired, warning: isExpiringSoon && !isExpired }">
@@ -55,9 +55,11 @@
               <div><strong>{{ trafficPercentage }}%</strong><span>已用比例</span></div>
             </div>
             <div class="elegant-usage__meta">
-              <div><span>{{ $t('dashboard.planTraffic') }}</span><strong>{{ userPlan.totalTraffic || '0 B' }}</strong></div>
-              <div><span>{{ $t('dashboard.remainingTraffic') }}</span><strong>{{ userStats.remainingTraffic || '0 B' }}</strong></div>
-              <div><span>{{ $t('dashboard.expiryDate') }}</span><strong>{{ userPlan.expireDate || '—' }}</strong></div>
+              <div><span>总流量</span><strong>{{ userPlan.totalTraffic || '0 B' }}</strong></div>
+              <div><span>已用流量</span><strong>{{ userPlan.usedTraffic || '0 B' }}</strong></div>
+              <div><span>剩余流量</span><strong>{{ userStats.remainingTraffic || '0 B' }}</strong></div>
+              <div><span>套餐名字</span><strong>{{ userPlan.name || '—' }}</strong></div>
+              <div><span>到期日期</span><strong>{{ userPlan.isExpireDatePermanent ? '长期有效' : (userPlan.expireDate || '—') }}</strong></div>
               <div><span>在线客户端</span><strong>{{ onlineClientDisplay }}</strong></div>
             </div>
           </div>
@@ -1080,7 +1082,8 @@ export default {
     const userPlan = ref({
       deviceLimit: null,
       aliveIp: 0,
-      resetDay: null
+      resetDay: null,
+      usedTraffic: '0 B'
     });
     const qrCodeLoading = ref(true);
     const showImportSubscription = ref(DASHBOARD_CONFIG.showImportSubscription)
@@ -1555,9 +1558,12 @@ export default {
           if (subscribe.transfer_enable) {
             userPlan.value.totalTraffic = formatTraffic(subscribe.transfer_enable);
           }
-          if (subscribe.transfer_enable && subscribe.u !== undefined && subscribe.d !== undefined) {
-            const usedTraffic = subscribe.u + subscribe.d;
+          if (subscribe.transfer_enable && (subscribe.u !== undefined || subscribe.d !== undefined)) {
+            const upload = Number(subscribe.u || 0);
+            const download = Number(subscribe.d || 0);
+            const usedTraffic = (Number.isFinite(upload) ? upload : 0) + (Number.isFinite(download) ? download : 0);
             const remainingTraffic = Math.max(0, subscribe.transfer_enable - usedTraffic);
+            userPlan.value.usedTraffic = formatTraffic(usedTraffic);
             userStats.remainingTraffic = formatTraffic(remainingTraffic);
           }
           if (subscribe.reset_day) {

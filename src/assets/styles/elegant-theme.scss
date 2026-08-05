@@ -884,12 +884,18 @@ select {
   gap: 22px;
 }
 
+.elegant-plan-card .elegant-usage {
+  display: block;
+  min-height: 0;
+}
+
 .elegant-usage__ring {
   width: 112px;
   height: 112px;
   flex: 0 0 auto;
   display: grid;
   place-items: center;
+  position: relative;
   border-radius: 50%;
   background: conic-gradient(#149982 var(--progress), #e8f1ef var(--progress));
 }
@@ -925,12 +931,26 @@ select {
   gap: 10px;
 }
 
+.elegant-plan-card .elegant-usage__ring {
+  margin: 18px auto 16px;
+}
+
+.elegant-plan-card .elegant-usage__meta {
+  gap: 0;
+}
+
 .elegant-usage__meta div,
 .elegant-summary-row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
+}
+
+.elegant-plan-card .elegant-usage__meta div {
+  min-width: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f3f3;
 }
 
 .elegant-usage__meta span,
@@ -941,9 +961,11 @@ select {
 
 .elegant-usage__meta strong,
 .elegant-summary-row strong {
+  min-width: max-content;
   color: #252525;
   font-size: 12px;
   text-align: right;
+  white-space: nowrap;
 }
 
 .elegant-card__actions {
@@ -2500,8 +2522,8 @@ body.dark-theme .notice-modal .notice-content {
     grid-column: auto;
   }
 
-  .elegant-usage {
-    gap: 14px;
+  .elegant-plan-card .elegant-usage {
+    display: block;
   }
 
   .elegant-usage__ring {
