@@ -529,6 +529,31 @@ body.dark-theme .elegant-menu__item.active {
   display: none !important;
 }
 
+/* 文档页使用独立的居中阅读宽度，避免被全局全宽重置规则拉到左侧。 */
+.docs-inner {
+  width: min(1200px, calc(100% - 32px)) !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+.docs-container .welcome-card {
+  margin-bottom: 28px !important;
+  padding: 20px !important;
+  border: 1px solid #e1e7ec !important;
+  border-radius: 14px !important;
+  background: rgba(248, 250, 252, .9) !important;
+  box-shadow: 0 8px 22px rgba(31, 49, 69, .07) !important;
+}
+
+.docs-container .welcome-card .card-header,
+.docs-container .welcome-card .card-body {
+  padding: 0 !important;
+}
+
+.docs-container .welcome-card .card-header {
+  margin-bottom: 12px !important;
+}
+
 .elegant-page-heading {
   margin: 0 0 14px;
   display: flex;
@@ -2297,6 +2322,12 @@ body.dark-theme .elegant-pending-order__action {
   border-color: #8c6c38;
   background: rgba(255, 193, 91, .12);
   color: #ffd37b;
+}
+
+body.dark-theme .docs-container .welcome-card {
+  border-color: #294950 !important;
+  background: rgba(16, 34, 38, .88) !important;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, .16) !important;
 }
 
 body.dark-theme .elegant-notice-panel__icon {
