@@ -95,6 +95,17 @@
 
 final result: blocked
 
+**Light landing and toolbar pass — 2026-08-05**
+
+- New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-95c6c95f-bb30-46ad-826d-62c267c09830.png`, `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-b05973a7-8f85-4a07-8b1c-fe3d74f36228.png`, and `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-258718f3-d247-449b-9453-4fd05881e3bc.png`.
+- [P1 fixed in code] Landing's opaque dark content panel is now transparent, so the aurora background remains the visual focus instead of a black rectangle.
+- [P1 fixed in code] The theme control remains functional but is presented as an icon-only moon/sun circle. It is no longer hidden on small screens.
+- [P2 fixed in code] Narrow screens use a compact `语言 + 当前语言` pill, while the opened menu keeps flag icons and language names with a light floating surface.
+- Behavioral evidence: production build, static artifact checks, `git diff --check`, and the Chatwoot VM regression test passed. The new deployment package is `Elegant-EZ-Panel-dist-light-landing-chatwoot-v3.zip`.
+- Visual evidence gap: this agent cannot drive the user's in-app browser or capture a post-fix screenshot at phone/tablet widths. The final result remains blocked until the user checks the compiled package in the selected browser.
+
+final result: blocked
+
 **Tablet breakpoint refinement — 2026-08-05**
 
 - [P1 fixed in code] The supplied 949px screenshot still matched the desktop language layout because the first compact rule began at 768px. The compact language trigger is now 1080px, matching iPad and narrow-window usage while preserving full labels on wide desktop screens.

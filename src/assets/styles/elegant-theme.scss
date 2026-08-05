@@ -2426,3 +2426,95 @@ body.dark-theme .notice-modal .notice-content {
     border-radius: 24px;
   }
 }
+
+/* Landing controls: keep the aurora visible and make the toolbar feel light. */
+.landing-page .content-container {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.landing-page .site-title {
+  text-shadow: 0 8px 28px rgba(30, 116, 105, .12);
+}
+
+body.dark-theme .landing-page .content-container {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.dark-theme .landing-page .site-title {
+  text-shadow: 0 8px 28px rgba(0, 0, 0, .28);
+}
+
+.landing-page .theme-toggle,
+.top-toolbar .theme-toggle {
+  width: 42px !important;
+  min-width: 42px !important;
+  height: 42px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(42, 135, 123, .18) !important;
+  background: rgba(255, 255, 255, .78) !important;
+  color: #277f73 !important;
+  box-shadow: 0 8px 24px rgba(40, 129, 117, .10) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.landing-page .theme-toggle:hover,
+.top-toolbar .theme-toggle:hover {
+  background: rgba(255, 255, 255, .94) !important;
+  border-color: rgba(42, 135, 123, .34) !important;
+  color: #167368 !important;
+}
+
+body.dark-theme .landing-page .theme-toggle,
+body.dark-theme .top-toolbar .theme-toggle {
+  border-color: rgba(123, 217, 197, .28) !important;
+  background: rgba(255, 255, 255, .12) !important;
+  color: #d9fff5 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .18) !important;
+}
+
+@media (max-width: 700px) {
+  .top-toolbar {
+    top: max(12px, env(safe-area-inset-top)) !important;
+    right: max(12px, env(safe-area-inset-right)) !important;
+    gap: 8px !important;
+  }
+
+  .top-toolbar .theme-toggle {
+    display: grid !important;
+  }
+
+  .top-toolbar .language-btn {
+    width: auto !important;
+    min-width: 136px !important;
+    height: 42px !important;
+    padding: 0 8px 0 14px !important;
+  }
+
+  .top-toolbar .language-label {
+    display: inline !important;
+    margin-right: auto !important;
+  }
+
+  .top-toolbar .language-current {
+    display: inline-flex !important;
+  }
+
+  .top-toolbar .language-btn > .flag-icon {
+    display: none !important;
+  }
+
+  .language-dropdown {
+    top: 50px !important;
+    min-width: 172px !important;
+    padding: 6px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 18px 42px rgba(28, 104, 96, .16) !important;
+  }
+}
