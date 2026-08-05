@@ -701,7 +701,7 @@ export default {
 
 
 
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .language-btn {
     width: 44px !important;
     min-width: 44px !important;
