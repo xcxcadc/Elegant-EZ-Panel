@@ -61,4 +61,13 @@
 
 - [P3] If a card grid has a business-defined recommended plan rather than a first plan, bind the mint featured treatment to that API flag instead of visual order.
 
+**Aurora refresh review**
+
+- New source visual truth (reported landing): `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-9b44d842-61ba-426a-ae24-c161e219049a.png`, Landing page with overly blank white canvas.
+- New source visual truth (reported version marker): `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-fee07d29-9ae5-4a4e-8e61-ba638c6e8ff6.png`, showing the unwanted `v0.4.0` corner marker.
+- New source visual truth (reported plan surface): `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-59d98b72-5c95-4683-90d9-a6be016e7ee6.png`, Shop's static pale-mint featured card.
+- Implementation: generated and retained a real, text-free aurora asset at `public/images/shop-aurora-mint.png`. The same low-contrast mint / sky / warm-light asset is used behind global page whitespace, the Landing canvas, and the Shop featured plan. Motion is limited to slow 18–34 second drift and switches off for `prefers-reduced-motion`.
+- Implementation: removed `.app-version` from both Vite entry HTML files; production `dist/index.html` was searched and no `v0.4.0` / `app-version` marker remains.
+- Verification: production build succeeded, output includes `dist/images/shop-aurora-mint.png`, and local preview returned HTTP 200. A browser-rendered comparison screenshot remains unavailable, so visual fidelity and animation smoothness cannot be marked as passed.
+
 final result: blocked

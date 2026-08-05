@@ -558,13 +558,7 @@ export default {
 
   margin-bottom: 20px;
 
-  background: linear-gradient(to right, var(--theme-color), #a78bfa);
-
-  -webkit-background-clip: text;
-
-  background-clip: text;
-
-  color: transparent;
+  color: #197a6f;
 
   text-align: center;
 
