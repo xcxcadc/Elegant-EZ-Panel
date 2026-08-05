@@ -651,6 +651,24 @@ const router = createRouter({
 
 });
 
+const updateRouteTitle = (route) => {
+  const titleKey = route?.meta?.titleKey;
+  if (!titleKey) {
+    document.title = SITE_CONFIG.siteName;
+    return;
+  }
+
+  try {
+    const translatedTitle = i18n.global.t(titleKey);
+    const pageTitle = translatedTitle && translatedTitle !== titleKey
+      ? translatedTitle
+      : route.name || SITE_CONFIG.siteName;
+    document.title = `${pageTitle} - ${SITE_CONFIG.siteName}`;
+  } catch (error) {
+    document.title = `${route.name || SITE_CONFIG.siteName} - ${SITE_CONFIG.siteName}`;
+  }
+};
+
 
 
 router.beforeEach(async (to, from, next) => {
@@ -796,7 +814,10 @@ router.beforeEach(async (to, from, next) => {
 
 
 
-router.afterEach(() => {
+router.afterEach((to) => {
+  // The guard can run before locale messages finish loading. Re-apply after
+  // navigation so the browser tab matches the visible route.
+  updateRouteTitle(to);
 
   setTimeout(() => {
 

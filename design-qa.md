@@ -95,6 +95,16 @@
 
 final result: blocked
 
+**Route title synchronization pass — 2026-08-05**
+
+- New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-277ce936-6404-4c7d-be48-c56bb5583110.png`, showing a mobile browser tab that should identify the current page rather than only the brand.
+- [P1 fixed in code] Route titles are now re-applied after navigation completes, after locale loading can finish, and the initialization helper no longer overwrites an already resolved route title.
+- Titles remain localized through existing `meta.titleKey` values and use the format `页面名称 - 云上冲浪板`.
+- Verification: production build and JavaScript syntax checks passed; the v6 static package includes the deployment-only Chatwoot bridge and middleware runtime configuration.
+- Visual evidence gap: this agent cannot drive the user's in-app browser or capture a post-fix mobile tab screenshot, so final rendered visual QA remains blocked until the user hard-refreshes the deployed package.
+
+final result: blocked
+
 **Mobile header and API middleware pass — 2026-08-05**
 
 - New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-96306c7c-ce78-4017-9f6a-eda80fb57fc0.png` and `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-63549caf-7a9a-4d15-8e16-c29b642e827d.png`.
