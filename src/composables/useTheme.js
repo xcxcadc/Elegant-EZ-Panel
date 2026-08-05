@@ -11,9 +11,12 @@ export function useTheme() {
     applyTheme(theme.value);
   };
   
-  const applyTheme = (selectedTheme) => {
-    const root = document.documentElement;
-    const themeVars = THEME_CONFIG[selectedTheme];
+  const applyTheme = (selectedTheme) => {
+    const root = document.documentElement;
+    const themeVars = THEME_CONFIG[selectedTheme];
+
+    root.dataset.theme = selectedTheme;
+    root.style.colorScheme = selectedTheme;
     
     if (selectedTheme === 'dark') {
       document.body.classList.add('dark-theme');

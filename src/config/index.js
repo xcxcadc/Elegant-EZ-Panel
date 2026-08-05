@@ -62,24 +62,24 @@ export const config  = {
 
     // ====================  网站基础配置  ====================
     SITE_CONFIG: {
-        siteName: 'Elegant',
-        siteDescription: 'EZ UI',
+        siteName: '云上冲浪板',
+        siteDescription: '冲浪板',
         // copyright会自动使用当前年份
-        copyright: `© ${new Date().getFullYear()} EZ THEME. All Rights Reserved.`,
+        copyright: `© ${new Date().getFullYear()} 云上冲浪板提供技术支持.`,
 
         // 是否显示标题中的网站Logo (true=显示, false=隐藏)
         showLogo: true,
 
         // Landing页面多语言标语
         landingText: {
-            'zh-CN': '探索全球网络无限可能',
-            'vi-VN': 'Khám phá khả năng vô hạn của mạng toàn cầu',
-            'en-US': 'Explore Unlimited Possibilities of Global Network',
-            'zh-TW': '探索全球網絡無限可能',
-            'ja-JP': 'グローバルネットワークの無限の可能性',
-            'ko-KR': '글로벌 네트워크의 무한한 가능성을 탐색하세요',
-            'ru-RU': 'Исследуйте безграничные возможности глобальной сети',
-            'fa-IR': 'امکانات نامحدود شبکه جهانی را کاوش کنید'
+            'zh-CN': '云上冲浪板 每一次连接都是一场新的旅程',
+            'vi-VN': 'Ván lướt sóng trên mây mỗi kết nối là một hành trình mới',
+            'en-US': 'Cloud Surfboard every connection is a brand new journey',
+            'zh-TW': '雲上衝浪板 每一次連接都是一場新的旅程',
+            'ja-JP': 'クラウドサーフボード 繋ぐたびに新しい旅が始まる',
+            'ko-KR': '클라우드 서핑보드 매번 연결할 때마다 새로운 여정이 시작됩니다',
+            'ru-RU': 'Облачный сёрфборд каждое подключение это новое путешествие',
+            'fa-IR': 'سرف‌بورد ابری هر اتصال یک سفر تازه است'
         },
 
         // 自定义landing页面路径（相对于public目录
@@ -97,7 +97,7 @@ export const config  = {
         defaultTheme: 'light',
 
         // 主题色 (16进制颜色值)
-        primaryColor: '#355cc2',
+        primaryColor: '#149982',
 
         // 是否启用落地页 (true=启用, false=禁用)
         enableLandingPage: true // 默认启用
@@ -120,19 +120,19 @@ export const config  = {
         // 认证页面弹窗公告配置
         popup: {
             // 是否启用弹窗
-            enabled: false,
+            enabled: true,
 
             // 弹窗标题
-            title: "用户须知 (可自定义开启)",
+            title: "冲浪板用户须知",
 
             // 弹窗内容 (支持HTML)
-            content: "<p><strong>欢迎使用我们的服务！</strong></p><p>请注意以下事项：</p><ul><li>请妥善保管您的账号信息</li><li>如有问题请联系客服</li></ul>",
+            content: "<p><strong>欢迎使用云上冲浪板！</strong></p><p>请注意以下事项：</p><ul><li>请妥善保管您的账号信息</li><li>如有问题请联系右下角在线客服</li></ul>",
 
             // 冷却时间（小时），在此时间内不会再次显示弹窗
-            cooldownHours: 0,
+            cooldownHours: 1,
 
             // 等待时间（秒），用户需要等待多少秒才能关闭弹窗，设为0表示无需等待
-            closeWaitSeconds: 3
+            closeWaitSeconds: 1
         }
     },
 
@@ -170,7 +170,7 @@ export const config  = {
     // 商店页面配置
     SHOP_CONFIG: {
         // 是否在商店导航上显示热销标记
-        showHotSaleBadge: false,
+        showHotSaleBadge: true,
 
         // 是否显示套餐特性卡片 (true=显示, false=隐藏)
         showPlanFeatureCards: true, // 默认显示
@@ -207,7 +207,7 @@ export const config  = {
             title: "用户须知",
 
             // 弹窗内容 (支持HTML)
-            content: "<p><strong>常规套餐默认每月订单日重置流量，您当月未用使用完的流量，不会累积到下个月</strong></p>",
+            content: "<p><strong style='color: #149982;'>常规套餐默认每月订单日重置流量，您当月未用完的流量不会累积到下个月。流量用尽后，续费无法重置流量，请购买重置流量包。</strong></p><p><strong style='color: #149982;'>一个账号只能同时拥有一个订阅，购买新订阅会覆盖旧订阅。</strong></p><p><strong style='color: #149982;'>一次性流量不会叠加；如需叠加，请先将仪表盘流量数据提交至工单后再付款，我们核实后会手动叠加。</strong></p>",
 
             // 冷却时间（小时），在此时间内不会再次显示弹窗
             cooldownHours: 0,
@@ -220,16 +220,16 @@ export const config  = {
         // 下单前二次确认
         confirmOrder: true,
         // 下单前二次确认内容
-        confirmOrderContent: "<p><strong style='color: red'>无法提供相关教程和使用说明。</strong></p><p><strong style='color: red'>不会使用请勿购买，没有退款政策</strong></p>",
+        confirmOrderContent: "<p><strong style='color: #149982;'>您确定要购买该套餐吗？新用户购买后请先查看使用文档再进行操作。</strong></p><p>已拥有套餐的用户购买新订阅会覆盖旧订阅。</p><p>一次性流量不会自动叠加；如需叠加，请先提交仪表盘流量数据至工单后再付款，我们核实后会手动处理。</p>",
 
     },
     // 仪表盘页面配置
     DASHBOARD_CONFIG: {
         // 是否在欢迎卡片中显示用户邮箱 (true=显示, false=隐藏)
-        showUserEmail: false,
+        showUserEmail: true,
 
         // 是否为导入订阅按钮添加高光效果和填充底色 (true=添加效果, false=不添加效果)
-        importButtonHighlightBtnbgcolor: false,
+        importButtonHighlightBtnbgcolor: true,
 
         // ===============================
 
@@ -273,15 +273,15 @@ export const config  = {
         showMacOS: true,
         showWindows: true,
         showLinux: true,
-        showOpenWrt: true,
+        showOpenWrt: false,
 
         // 客户端下载链接  //可以改成文档链接直接在新标签页打开
         clientLinks: {
-            ios: 'https://apps.apple.com/app/xxx',
-            android: 'https://play.google.com/store/apps/xxx',
-            macos: 'https://github.com/xxx/releases/latest',
-            windows: 'https://github.com/xxx/releases/latest',
-            linux: 'https://github.com/xxx/releases/latest',
+            ios: 'https://apps.apple.com/us/app/hiddify-proxy-vpn/id6596777532',
+            android: '/#/docs/1',
+            macos: '/#/docs/1',
+            windows: '/#/docs/1',
+            linux: '/#/docs/1',
             openwrt: 'https://github.com/xxx/releases/latest'
         },
 
@@ -331,10 +331,10 @@ export const config  = {
     // 用户中心页面配置
     PROFILE_CONFIG: {
         // 是否显示礼品卡兑换栏目 (true=显示, false=隐藏)
-        showGiftCardRedeem: false, // 只有Xiao-V2board支持礼品卡兑换
+        showGiftCardRedeem: true, // 只有Xiao-V2board支持礼品卡兑换
 
         // 是否显示最近登录设备栏目 (true=显示, false=隐藏)
-        showRecentDevices: true
+        showRecentDevices: false
     },
 
     // =======================================================
@@ -489,7 +489,7 @@ export const config  = {
             // 弹窗标题
             title: "工单须知",
             // 弹窗内容 (支持HTML)
-            content: "<p>请您准确描述您的问题，再提交工单，以便我们更快帮助您。</p>",
+            content: "<p>请准确描述您遇到的问题，并附上相关截图后再提交工单，以便我们更快帮助您处理。</p>",
             // 冷却时间（小时），在此时间内不会再次显示弹窗
             cooldownHours: 24,
             // 等待时间（秒），用户需要等待多少秒才能关闭弹窗，设为0表示无需等待
@@ -513,7 +513,7 @@ export const config  = {
         daysToShow: 30, // 默认显示30天
 
         // 流量趋势图是否聚合每日流量 (如果你的节点倍率全为1倍则无需开启)
-        sumDailyTraffic: false // 默认禁用
+        sumDailyTraffic: true // 默认启用
     },
 
     // 节点列表配置
@@ -525,7 +525,7 @@ export const config  = {
         showNodeDetails: false,
 
         // 是否允许查看节点详细信息（控制详情按钮和模态框）
-        allowViewNodeInfo: true
+        allowViewNodeInfo: false
     },
 
     // 客服系统配置

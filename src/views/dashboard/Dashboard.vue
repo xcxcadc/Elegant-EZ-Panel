@@ -11,11 +11,32 @@
 
       <section class="elegant-dashboard__hero" style="background-image: url('/images/dashboard-hero.png')">
         <div class="elegant-dashboard__hero-copy">
-          <span class="elegant-eyebrow">ELEGANT NETWORK</span>
+          <span class="elegant-eyebrow">{{ SITE_CONFIG.siteName || '云上冲浪板' }}</span>
           <strong>{{ $t('dashboard.welcome') }}</strong>
           <span>{{ $t('dashboard.welcomeDesc') }}</span>
         </div>
         <button type="button" class="elegant-hero-action" @click="goToShop">{{ $t('dashboard.purchasePlan') }} <IconChevronRight :size="16" /></button>
+      </section>
+
+      <section class="elegant-notice-panel" aria-label="站内公告">
+        <div class="elegant-notice-panel__leading">
+          <span class="elegant-notice-panel__icon"><IconMessage :size="17" /></span>
+          <div v-if="notices?.data?.length" class="elegant-notice-panel__copy">
+            <span>站内公告 · {{ currentNoticeIndex + 1 }}/{{ notices.data.length }}</span>
+            <button type="button" @click="showNoticeModal">{{ notices.data[currentNoticeIndex]?.title || '查看最新公告' }}</button>
+            <small>{{ formatDate(notices.data[currentNoticeIndex]?.created_at) }}</small>
+          </div>
+          <div v-else class="elegant-notice-panel__copy">
+            <span>站内公告</span>
+            <strong>暂无公告</strong>
+            <small>新公告发布后会显示在这里</small>
+          </div>
+        </div>
+        <div v-if="notices?.data?.length" class="elegant-notice-panel__actions">
+          <button type="button" aria-label="上一条公告" :disabled="currentNoticeIndex <= 0" @click="prevNotice"><IconChevronLeft :size="15" /></button>
+          <button type="button" class="elegant-notice-panel__open" @click="showNoticeModal">查看详情 <IconEye :size="14" /></button>
+          <button type="button" aria-label="下一条公告" :disabled="currentNoticeIndex >= notices.data.length - 1" @click="nextNotice"><IconChevronRight :size="15" /></button>
+        </div>
       </section>
 
       <div class="elegant-dashboard__grid">
@@ -126,6 +147,23 @@
         <button type="button" class="elegant-shortcut" @click="openDocumentation"><span class="elegant-shortcut__icon elegant-shortcut__icon--mint"><IconFileText :size="17" /></span><span><strong>文档</strong><small>浏览技术文档和使用教程</small></span><IconChevronRight :size="15" /></button>
         <button type="button" class="elegant-shortcut" @click="goToSupport"><span class="elegant-shortcut__icon elegant-shortcut__icon--amber"><IconMessage :size="17" /></span><span><strong>客户支持</strong><small>提交工单获取一对一帮助</small></span><IconChevronRight :size="15" /></button>
       </div>
+
+      <transition name="fade">
+        <div v-if="showNoticeDetails && notices?.data?.[currentNoticeIndex]" class="notice-modal-overlay" @click.self="closeNoticeModal">
+          <div class="notice-modal" :style="noticeModalStyle" role="dialog" aria-modal="true" :aria-label="notices.data[currentNoticeIndex].title">
+            <div class="notice-modal-header">
+              <h2 class="popup-title">{{ notices.data[currentNoticeIndex].title }}</h2>
+              <button class="popup-close-btn" aria-label="关闭公告" @click="closeNoticeModal"><IconX :size="20" /></button>
+            </div>
+            <div class="notice-modal-content">
+              <div v-html="processedNoticeContent" class="notice-content"></div>
+            </div>
+            <div class="notice-modal-footer">
+              <button class="popup-action-btn adaptive-btn" @click="closeNoticeModal">{{ $t('common.close') }}</button>
+            </div>
+          </div>
+        </div>
+      </transition>
     </div>
 
     <div class="legacy-dashboard">
@@ -2168,6 +2206,7 @@ export default {
       trafficActivityError,
       waterAnimationState,
       DASHBOARD_CONFIG,
+      SITE_CONFIG,
       allowNewPeriod,
       showImportSubscription,
     };

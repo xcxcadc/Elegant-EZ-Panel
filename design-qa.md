@@ -70,4 +70,27 @@
 - Implementation: removed `.app-version` from both Vite entry HTML files; production `dist/index.html` was searched and no `v0.4.0` / `app-version` marker remains.
 - Verification: production build succeeded, output includes `dist/images/shop-aurora-mint.png`, and local preview returned HTTP 200. A browser-rendered comparison screenshot remains unavailable, so visual fidelity and animation smoothness cannot be marked as passed.
 
+**Dashboard scale and copy refresh**
+
+- New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-8cf60afb-29fc-40cd-939a-71ef4978f216.png` at 1280 × 848 px, desktop dashboard with a broad three-column information strip below the hero.
+- [P1 fixed in code] The existing 960 px breakpoint made the dashboard enter a constrained two-column layout too early. At the current in-app browser width (about 955 px), this restricted the content area to 760 px and made the dashboard feel visibly smaller than the supplied desktop reference.
+- Fix: desktop content now allows up to 1120 px, the three-column dashboard treatment remains active down to 840 px, and the hero, grid gaps, and card padding are proportionally enlarged. The mobile one-column breakpoint is preserved.
+- [P1 fixed in code] The attached configuration's public-facing business copy was missing from the local configuration. The site name, landing message, account notice, shop notice, purchase confirmation, client documentation links, ticket screenshot instruction, and relevant display switches are now applied. API base, middleware connection, and local ticket-image key were deliberately preserved to avoid breaking the working nskan integration.
+- Verification: `npm.cmd run build` completed after these changes. The user-selected in-app browser cannot be driven or captured from this agent session, so no same-viewport post-fix screenshot or visual comparison can be accepted.
+
+**Announcement restoration**
+
+- New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-95b36d06-9fe2-454b-972a-3546af2cedb2.png`, the widened desktop dashboard where the information strip needs to remain part of the live user experience.
+- [P0 fixed in code] The server announcement list and its automatic popup behaviour were still implemented but only rendered within `.legacy-dashboard`. The refreshed dashboard intentionally hides that legacy container, so users could neither see the current notice nor the modal even though `getNotices()` continued to fetch data.
+- Fix: a live announcement strip now sits directly below the hero. It reuses the existing notices API state, current-index controls, content formatter, date formatter, detail-dialog controller, and mobile-friendly modal styles. It provides a clear empty state, previous/next navigation, and a direct “查看详情” action.
+- Popup behavior: an API notice tagged `弹窗` continues to open automatically once per browser session through the existing `popup_notice_shown_<id>` session marker; the modal is now in the visible refreshed dashboard rather than the hidden legacy markup.
+- Verification: `npm.cmd run build` completed after the restoration and `http://localhost:4173` returned HTTP 200. The agent cannot control or capture the selected in-app browser, so click and rendering QA must remain unverified rather than claimed as passed.
+
+**Dark-theme restoration**
+
+- New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-55244270-2933-4f2d-83a4-608b1114d25a.png`, showing the dashboard after the moon toggle where the icon state changed but the page stayed in its light palette.
+- [P0 fixed in code] `useTheme()` correctly added `body.dark-theme`, but the Elegant stylesheet subsequently forced light root variables and `body.dark-theme` itself to white using `!important`. The system therefore changed state without changing the rendered global colours.
+- Fix: removed the light-mode override on `body.dark-theme`, synchronize a `data-theme` / `color-scheme` marker when applying a theme, and added a full midnight-aurora token layer. It covers the header controls, content canvas, dashboard cards and notices, import and QR surfaces, shop filters and cards, tables, common form controls, dropdowns, and modal surfaces. The dark palette uses deep teal surfaces with readable mint highlights, while reducing the aurora asset intensity on dark featured cards.
+- Verification: `npm.cmd run build` completed after the fix and `git diff --check` passed. The in-app browser cannot be controlled or captured by this agent, so the actual moon-toggle interaction still requires a user-side refresh and click before visual QA can be marked complete.
+
 final result: blocked
