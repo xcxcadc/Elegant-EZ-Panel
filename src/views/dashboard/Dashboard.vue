@@ -67,7 +67,7 @@
           </div>
         </section>
 
-        <section class="elegant-card elegant-summary-card">
+        <section class="elegant-card elegant-legacy-summary-card">
           <div class="elegant-card__head"><span class="elegant-label">账户概览</span><IconWallet :size="20" /></div>
           <button type="button" class="elegant-summary-row elegant-summary-action" @click="toggleImportCard"><span>订阅导入</span><strong>{{ userPlan.subscribeUrl ? '已生成' : '待生成' }} <IconChevronRight :size="13" /></strong></button>
           <div class="elegant-summary-row"><span>{{ $t('dashboard.remainingDays') }}</span><strong>{{ userStats.remainingDays || '—' }}<small>{{ userStats.isRemainingDaysPermanent ? '' : ' 天' }}</small></strong></div>
@@ -75,16 +75,40 @@
           <button type="button" class="elegant-inline-link" @click="navigateToDeposit">查看账户与充值 <IconChevronRight :size="15" /></button>
         </section>
 
+        <section class="elegant-card elegant-detail-card">
+          <div class="elegant-card__head"><span class="elegant-label">账户与订阅</span><IconWallet :size="20" /></div>
+          <button type="button" class="elegant-detail-row" @click="toggleImportCard">
+            <span class="elegant-detail-icon elegant-detail-icon--blue"><IconTransferVertical :size="17" /></span>
+            <span class="elegant-detail-copy"><small>链接与二维码</small><strong>订阅导入</strong><em>复制链接或扫码导入客户端</em></span>
+            <IconChevronRight :size="15" />
+          </button>
+          <div class="elegant-detail-row">
+            <span class="elegant-detail-icon elegant-detail-icon--gold"><IconCalendar :size="17" /></span>
+            <span class="elegant-detail-copy"><small>剩余时间</small><strong>{{ userStats.isRemainingDaysPermanent ? '长期有效' : `剩余 ${userStats.remainingDays || 0} 天` }}</strong><em>到期日期：{{ userPlan.expireDate || '—' }}</em></span>
+          </div>
+          <button type="button" class="elegant-detail-row" @click="navigateToDeposit">
+            <span class="elegant-detail-icon elegant-detail-icon--mint"><IconWallet :size="17" /></span>
+            <span class="elegant-detail-copy"><small>账户余额</small><strong>{{ userStats.accountBalance || `${currencySymbol}0.00` }}</strong><em>查看订单与充值</em></span>
+            <IconChevronRight :size="15" />
+          </button>
+          <button type="button" class="elegant-detail-row" @click="router.push('/invite')">
+            <span class="elegant-detail-icon elegant-detail-icon--lilac"><IconCoins :size="17" /></span>
+            <span class="elegant-detail-copy"><small>佣金余额</small><strong>{{ userStats.commissionBalance || `${currencySymbol}0.00` }}</strong><em>前往邀请返佣</em></span>
+            <IconChevronRight :size="15" />
+          </button>
+        </section>
+
         <section class="elegant-card elegant-activity-card">
-          <div class="elegant-card__head"><div><span class="elegant-label">流量活动</span><p>近 7 日上传与下载流量</p></div><IconWaveSawTool :size="21" /></div>
+          <div class="elegant-card__head elegant-activity-card__head"><div><span class="elegant-label">流量活动</span><p>近 7 日上传与下载流量</p></div><div class="elegant-activity-totals" aria-label="近七日流量汇总"><span><i class="download"></i>下载 <strong>{{ formatTraffic(trafficActivityTotals.download) }}</strong></span><span><i class="upload"></i>上传 <strong>{{ formatTraffic(trafficActivityTotals.upload) }}</strong></span><IconWaveSawTool :size="21" /></div></div>
           <div v-if="trafficActivityHasData" class="elegant-activity-chart">
             <div class="elegant-activity-bars">
-              <div v-for="day in trafficActivity" :key="day.key" class="elegant-activity-day" :title="`${day.label} · 上传 ${formatTraffic(day.upload)} · 下载 ${formatTraffic(day.download)}`">
+              <div v-for="day in trafficActivity" :key="day.key" class="elegant-activity-day" :title="`${day.label} · 上传 ${formatTraffic(day.upload)} · 下载 ${formatTraffic(day.download)}`" :aria-label="`${day.label}：下载 ${formatTraffic(day.download)}，上传 ${formatTraffic(day.upload)}`">
                 <div class="elegant-activity-bar-track">
                   <span class="elegant-activity-bar elegant-activity-bar--download" :style="{ height: `${day.downloadPercent}%` }"></span>
                   <span class="elegant-activity-bar elegant-activity-bar--upload" :style="{ height: `${day.uploadPercent}%` }"></span>
                 </div>
                 <small>{{ day.label }}</small>
+                <span class="elegant-activity-day__value">{{ day.total ? formatTraffic(day.total) : '—' }}</span>
               </div>
             </div>
             <div class="elegant-activity-legend"><span><i class="download"></i>下载</span><span><i class="upload"></i>上传</span></div>
@@ -2109,6 +2133,10 @@ export default {
     });
 
     const trafficActivityHasData = computed(() => trafficActivity.value.some(day => day.total > 0));
+    const trafficActivityTotals = computed(() => trafficActivity.value.reduce((totals, day) => ({
+      upload: totals.upload + day.upload,
+      download: totals.download + day.download
+    }), { upload: 0, download: 0 }));
 
     return {
       userStats,
@@ -2203,6 +2231,7 @@ export default {
       onlineClientDisplay,
       trafficActivity,
       trafficActivityHasData,
+      trafficActivityTotals,
       trafficActivityError,
       waterAnimationState,
       DASHBOARD_CONFIG,

@@ -4,7 +4,7 @@ window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
 
 import { createApp } from 'vue';
 import App from './App.vue';
-import router from './router';
+import router, { syncRouteTitle } from './router';
 import { pinia, useAuthStore } from './stores';
 import i18n from './i18n';
 import { MotionPlugin } from '@vueuse/motion';
@@ -35,6 +35,13 @@ const initApp = async () => {
        .use(MotionPlugin);
 
     app.mount('#app');
+
+    // A static title is only a no-JavaScript fallback. Re-apply the resolved
+    // route title once Vue Router is ready so desktop and mobile tabs agree.
+    router.isReady().then(() => {
+      syncRouteTitle();
+      window.requestAnimationFrame(syncRouteTitle);
+    });
 
     useAuthStore().initUserInfo();
   } catch (error) {

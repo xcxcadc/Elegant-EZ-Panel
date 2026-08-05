@@ -474,16 +474,37 @@ export default {
     
     const orderDetail = ref({});
     const paymentMethods = ref([]);
-    const selectedMethod = ref(null);
-    const paymentCheckTimer = ref(null);
-    const paymentSuccessful = ref(false);
+    const selectedMethod = ref(null);
+    const paymentCheckTimer = ref(null);
+    const paymentRetryTimer = ref(null);
+    const paymentCheckInFlight = ref(false);
+    const paymentSuccessful = ref(false);
     const showSuccessAnimation = ref(false);
     const showConfettiAnimation = ref(false);
     
     const showCancelConfirm = ref(false);
     const showPaymentModal = ref(false);
     const paymentQRCode = ref(null);
-    const paymentLink = ref(null);
+    const paymentLink = ref(null);
+
+    const normalizePaymentStatus = (response) => {
+      const payload = response?.data;
+      const status = payload && typeof payload === 'object' ? payload.status : payload;
+      const normalizedStatus = Number(status);
+      return Number.isFinite(normalizedStatus) ? normalizedStatus : null;
+    };
+
+    const clearPaymentCheckTimers = () => {
+      if (paymentCheckTimer.value) {
+        clearInterval(paymentCheckTimer.value);
+        paymentCheckTimer.value = null;
+      }
+
+      if (paymentRetryTimer.value) {
+        clearTimeout(paymentRetryTimer.value);
+        paymentRetryTimer.value = null;
+      }
+    };
     
     const handleFeeAmount = computed(() => {
 
@@ -641,120 +662,99 @@ export default {
       }
     };
     
-    const startPaymentCheck = async () => {
-      try {
-        if (paymentSuccessful.value) {
-          return;
-        }
-        
-        await performPaymentCheck();
-        
-        if (orderDetail.value.total_amount === 0 && !paymentSuccessful.value) {
-          setTimeout(async () => {
-            const suppressToast = true;
-            await performPaymentCheck(suppressToast);
-          }, 1000);
-        }
-        else if (orderDetail.value.total_amount > 0 && !paymentSuccessful.value) {
-          if (paymentCheckTimer.value) {
-            clearInterval(paymentCheckTimer.value);
-          }
-          
-          if (PAYMENT_CONFIG.autoCheckPayment) {
-            let checkCount = 0;
-            
-            paymentCheckTimer.value = setInterval(() => {
-              checkCount++;
-              
-              performPaymentCheck();
-              
-              if (PAYMENT_CONFIG.autoCheckMaxTimes > 0 && checkCount >= PAYMENT_CONFIG.autoCheckMaxTimes) {
-                clearInterval(paymentCheckTimer.value);
-                loading.checking = false;
-                
-                if (!paymentSuccessful.value) {
-                  showToast(t('payment.check_timeout'), 'info');
-                }
-              }
-            }, PAYMENT_CONFIG.autoCheckInterval);
-          } else {
-            let checkCount = 0;
-            paymentCheckTimer.value = setInterval(() => {
-              checkCount++;
-              
-              performPaymentCheck();
-              
-              if (checkCount >= 2) {
-                clearInterval(paymentCheckTimer.value);
-                loading.checking = false;
-                
-                if (!paymentSuccessful.value) {
-                  showToast(t('payment.check_timeout'), 'info');
-                }
-              }
-            }, 5000);
-          }
-        }
-      } catch (error) {
-        console.error('检查支付状态失败:', error);
-        showToast(t('payment.check_failed'), 'error');
-        loading.checking = false;
-      }
-    };
-    
-    const performPaymentCheck = async (suppressToast = false) => {
-      try {
-        const response = await checkOrderStatus(orderDetail.value.trade_no);
-        
-        if (response.data === 1) {
-          orderDetail.value.status = response.data;
-          
-          setTimeout(() => {
-            const statusElement = document.querySelector('.order-status-notice');
-            if (statusElement) {
-              statusElement.classList.add('status-transition');
-            }
-            
-            orderDetail.value.status = 3;
-            
-            handlePaymentSuccess(!suppressToast);
-          }, 1000);
-        }
-        else if (response.data !== 0 && response.data !== 2) {
-          orderDetail.value.status = response.data;
-          
-          handlePaymentSuccess(!suppressToast);
-        } else if (response.data === 2) {
-          if (paymentCheckTimer.value) {
-            clearInterval(paymentCheckTimer.value);
-            paymentCheckTimer.value = null;
-          }
-          
-          if (!suppressToast) {
-            showToast(t('payment.order_cancelled'), 'warning');
-          }
-          loading.checking = false;
-          loading.paying = false;
-          
-          orderDetail.value.status = response.data;
-          
-          closePaymentModal();
-        }
-        
-        if (orderDetail.value.total_amount === 0) {
-          loading.checking = false;
-          loading.paying = false;
-        }
-      } catch (error) {
-        console.error('检查支付状态失败:', error);
-        if (orderDetail.value.total_amount === 0) {
-          loading.checking = false;
-          loading.paying = false;
-        }
-      }
-    };
-    
-    const handlePaymentSuccess = (showNotification = true) => {
+    const performPaymentCheck = async ({ suppressToast = false } = {}) => {
+      if (paymentSuccessful.value || paymentCheckInFlight.value || !orderDetail.value.trade_no) {
+        return null;
+      }
+
+      paymentCheckInFlight.value = true;
+
+      try {
+        const response = await checkOrderStatus(orderDetail.value.trade_no);
+        const status = normalizePaymentStatus(response);
+
+        if (status === null) {
+          throw new Error('Invalid payment status response');
+        }
+
+        orderDetail.value.status = status;
+
+        if (status === 2) {
+          clearPaymentCheckTimers();
+          loading.checking = false;
+          loading.paying = false;
+          closePaymentModal();
+
+          if (!suppressToast) {
+            showToast(t('payment.order_cancelled'), 'warning');
+          }
+        } else if (status === 3 || status === 4) {
+          handlePaymentSuccess(!suppressToast);
+        }
+        // Status 1 means processing. It must never be promoted to success on
+        // the client; only the order-status API can confirm a completed order.
+
+        if (Number(orderDetail.value.total_amount) === 0) {
+          loading.checking = false;
+          loading.paying = false;
+        }
+
+        return status;
+      } catch (error) {
+        console.error('检查支付状态失败:', error);
+        return null;
+      } finally {
+        paymentCheckInFlight.value = false;
+      }
+    };
+
+    const startPaymentCheck = async () => {
+      if (paymentSuccessful.value || paymentCheckInFlight.value || !orderDetail.value.trade_no) {
+        return;
+      }
+
+      const initialStatus = await performPaymentCheck({ suppressToast: true });
+      if (initialStatus === 2 || initialStatus === 3 || initialStatus === 4 || paymentSuccessful.value) {
+        return;
+      }
+
+      clearPaymentCheckTimers();
+
+      if (Number(orderDetail.value.total_amount) === 0) {
+        // Free orders can be activated asynchronously by the API. One delayed
+        // verification is enough and avoids leaving a timer behind.
+        paymentRetryTimer.value = window.setTimeout(() => {
+          performPaymentCheck({ suppressToast: true });
+        }, 1000);
+        return;
+      }
+
+      const autoCheckEnabled = PAYMENT_CONFIG.autoCheckPayment;
+      const maxChecks = autoCheckEnabled && Number(PAYMENT_CONFIG.autoCheckMaxTimes) > 0
+        ? Number(PAYMENT_CONFIG.autoCheckMaxTimes)
+        : 2;
+      const interval = autoCheckEnabled ? Number(PAYMENT_CONFIG.autoCheckInterval) || 5000 : 5000;
+      let checkCount = 0;
+
+      paymentCheckTimer.value = window.setInterval(async () => {
+        if (document.hidden || paymentCheckInFlight.value || paymentSuccessful.value) return;
+
+        checkCount += 1;
+        const status = await performPaymentCheck({ suppressToast: true });
+        const isTerminal = status === 2 || status === 3 || status === 4 || paymentSuccessful.value;
+
+        if (isTerminal || checkCount >= maxChecks) {
+          clearPaymentCheckTimers();
+          loading.checking = false;
+
+          if (!isTerminal) {
+            showToast(t('payment.check_timeout'), 'info');
+          }
+        }
+      }, interval);
+    };
+
+    const handlePaymentSuccess = (showNotification = true) => {
       if (paymentSuccessful.value) {
         return;
       }
@@ -816,19 +816,48 @@ export default {
       return method ? method.name : '';
     };
     
-    const processPayment = async () => {
+    const openExternalPaymentLink = (url, paymentWindow = null) => {
+      if (!url) return false;
+
+      try {
+        if (paymentWindow && !paymentWindow.closed) {
+          paymentWindow.opener = null;
+          paymentWindow.location.replace(url);
+          return true;
+        }
+
+        if (PAYMENT_CONFIG.openPaymentInNewTab) {
+          return Boolean(window.open(url, '_blank', 'noopener,noreferrer'));
+        }
+
+        window.location.assign(url);
+        return true;
+      } catch (error) {
+        console.error('支付链接打开失败:', error);
+        return false;
+      }
+    };
+
+    const processPayment = async () => {
       if (!selectedMethod.value) {
         showToast(t('payment.select_method_first'), 'warning');
         return;
       }
       
-      loading.paying = true;
+      // Open a blank tab while this click still has a user gesture. Mobile
+      // browsers otherwise block a payment window opened after checkout returns.
+      const paymentWindow = PAYMENT_CONFIG.openPaymentInNewTab && detectBrowser() !== 'Safari'
+        ? window.open('', '_blank')
+        : null;
+
+      loading.paying = true;
       
       try {
         const response = await checkoutOrder(orderDetail.value.trade_no, selectedMethod.value);
         
         if (response.data) {
-          if (response.type === 0) {
+          if (response.type === 0) {
+            if (paymentWindow && !paymentWindow.closed) paymentWindow.close();
             paymentQRCode.value = response.data;
             paymentLink.value = null;
             showPaymentModal.value = true;
@@ -837,7 +866,16 @@ export default {
             paymentQRCode.value = null;
             
             const isSafari = detectBrowser() === 'Safari';
-            const useSafariModal = PAYMENT_CONFIG.useSafariPaymentModal;
+            const useSafariModal = PAYMENT_CONFIG.useSafariPaymentModal;
+
+            if (!isSafari) {
+              openExternalPaymentLink(response.data, paymentWindow);
+              // Keep the status checker available even when the browser blocks
+              // a new tab or the user returns from a third-party callback.
+              showPaymentModal.value = true;
+              startPaymentCheck();
+              return;
+            }
             
             if (isSafari && useSafariModal) {
               showPaymentModal.value = true;
@@ -870,7 +908,8 @@ export default {
           startPaymentCheck();
         }
       } catch (error) {
-        console.error('发起支付失败:', error);
+        if (paymentWindow && !paymentWindow.closed) paymentWindow.close();
+        console.error('发起支付失败:', error);
         showToast(t('payment.check_failed'), 'error');
       } finally {
         loading.paying = false;
@@ -938,61 +977,30 @@ export default {
       }
     };
     
-    const checkPaymentStatus = async () => {
-      loading.checking = true;
-      try {
-        const response = await checkOrderStatus(orderDetail.value.trade_no);
-        
-        if (response.data === 0) {
-          showToast(t('payment.payment_pending'), 'info');
-        } else if (response.data === 2) {
-          showToast(t('payment.order_cancelled'), 'warning');
-          
-          if (paymentCheckTimer.value) {
-            clearInterval(paymentCheckTimer.value);
-            paymentCheckTimer.value = null;
-          }
-          
-          orderDetail.value.status = response.data;
-          
-        } else {
-          showToast(t('payment.payment_successful'), 'success');
-          
-          orderDetail.value.status = response.data;
-          
-          paymentSuccessful.value = true;
-          
-          if (paymentCheckTimer.value) {
-            clearInterval(paymentCheckTimer.value);
-            paymentCheckTimer.value = null;
-          }
-          
-          closePaymentModal();
-          
-          showSuccessAnimation.value = true;
-          
-          setTimeout(() => {
-            showConfettiAnimation.value = true;
-          }, 300);
-          
-          setTimeout(() => {
-            showConfettiAnimation.value = false;
-            
-            setTimeout(() => {
-              showSuccessAnimation.value = false;
-            }, 500);
-          }, 4500);
-        }
-      } catch (error) {
-        console.error('检查支付状态失败:', error);
-        showToast(t('payment.check_failed'), 'error');
-      } finally {
-        loading.checking = false;
-        loading.paying = false;
-      }
-    };
-    
-    const getStatusText = (status) => {
+    const checkPaymentStatus = async () => {
+      loading.checking = true;
+
+      try {
+        const status = await performPaymentCheck();
+
+        if (status === null) {
+          showToast(t('payment.check_failed'), 'error');
+        } else if (status === 0 || status === 1) {
+          showToast(
+            status === 1 ? t('payment.payment_processing') : t('payment.payment_pending'),
+            'info'
+          );
+        }
+      } catch (error) {
+        console.error('检查支付状态失败:', error);
+        showToast(t('payment.check_failed'), 'error');
+      } finally {
+        loading.checking = false;
+        loading.paying = false;
+      }
+    };
+
+    const getStatusText = (status) => {
       const statusMap = {
         0: t('payment.status.pending'),
         1: t('payment.status.processing'),
@@ -1018,9 +1026,15 @@ export default {
       router.go(-1);
     };
     
-    onMounted(() => {
+    const handlePaymentPageVisibility = () => {
+      if (document.hidden || paymentSuccessful.value || Number(orderDetail.value.status) !== 0) return;
+      performPaymentCheck({ suppressToast: true });
+    };
+
+    onMounted(() => {
       fetchOrderDetail();
-      fetchPaymentMethods();
+      fetchPaymentMethods();
+      document.addEventListener('visibilitychange', handlePaymentPageVisibility);
       
       if (route.query.from === 'orders') {
         fromOrderList.value = true;
@@ -1055,7 +1069,9 @@ export default {
       }, { immediate: false });
     });
     
-    onBeforeUnmount(() => {
+    onBeforeUnmount(() => {
+      document.removeEventListener('visibilitychange', handlePaymentPageVisibility);
+      clearPaymentCheckTimers();
       if (paymentCheckTimer.value) {
         clearInterval(paymentCheckTimer.value);
       }

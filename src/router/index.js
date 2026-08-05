@@ -651,7 +651,7 @@ const router = createRouter({
 
 });
 
-const updateRouteTitle = (route) => {
+export const updateRouteTitle = (route) => {
   const titleKey = route?.meta?.titleKey;
   if (!titleKey) {
     document.title = SITE_CONFIG.siteName;
@@ -668,6 +668,15 @@ const updateRouteTitle = (route) => {
     document.title = `${route.name || SITE_CONFIG.siteName} - ${SITE_CONFIG.siteName}`;
   }
 };
+
+// Keep the document title driven by the resolved route instead of the static
+// HTML fallback. This is especially important on mobile browsers, which can
+// restore a page from the back/forward cache without running a full app boot.
+export const syncRouteTitle = () => {
+  updateRouteTitle(router.currentRoute.value);
+};
+
+let pageTransitionTimer = null;
 
 
 
@@ -726,31 +735,7 @@ router.beforeEach(async (to, from, next) => {
 
   
 
-  const getTitle = () => {
-
-    if (to.meta.titleKey) {
-
-      try {
-
-        const title = i18n.global.t(to.meta.titleKey);
-
-        return `${title} - ${SITE_CONFIG.siteName}`;
-
-      } catch (error) {
-
-        return SITE_CONFIG.siteName;
-
-      }
-
-    }
-
-    return SITE_CONFIG.siteName;
-
-  };
-
-  
-
-  document.title = getTitle();
+  updateRouteTitle(to);
 
   
 
@@ -819,7 +804,11 @@ router.afterEach((to) => {
   // navigation so the browser tab matches the visible route.
   updateRouteTitle(to);
 
-  setTimeout(() => {
+  if (pageTransitionTimer) {
+    window.clearTimeout(pageTransitionTimer);
+  }
+
+  pageTransitionTimer = window.setTimeout(() => {
 
     document.body.classList.remove('page-transitioning');
 
@@ -831,8 +820,15 @@ router.afterEach((to) => {
 // the language drawer changes the active locale in place.
 if (typeof window !== 'undefined') {
   window.addEventListener('languageChanged', () => {
-    updateRouteTitle(router.currentRoute.value);
+    syncRouteTitle();
   });
+
+  const syncAfterBrowserRestore = () => {
+    window.requestAnimationFrame(syncRouteTitle);
+  };
+
+  window.addEventListener('pageshow', syncAfterBrowserRestore);
+  window.addEventListener('hashchange', syncAfterBrowserRestore);
 }
 
 

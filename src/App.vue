@@ -90,6 +90,10 @@ export default {
     const cachedRoutes = computed(() => pageCache.getCachedRoutes());
     const customerServiceConfig = computed(() => CUSTOMER_SERVICE_CONFIG);
     const languageChangedSignal = ref(0);
+    const { showToast } = useToast();
+    let visibilityRefreshInFlight = false;
+    let lastVisibilityRefreshAt = 0;
+    const visibilityRefreshCooldown = 20000;
 
     router.beforeEach((to, from, next) => {
       if (to.meta.keepAlive && to.name) pageCache.addRouteToCache(to.name);
@@ -119,12 +123,24 @@ export default {
       window.setTimeout(() => document.body.classList.remove('language-transitioning'), 300);
     };
 
-    const handleVisibilityChange = () => {
-      if (document.hidden) return;
-      checkAuthAndReloadMessages();
-      checkUserLoginStatus().then(result => {
-        if (result.isLoggedIn === false && result.message) useToast().showToast(result.message, 'warning');
-      }).catch(() => {});
+    const handleVisibilityChange = async () => {
+      if (document.hidden || visibilityRefreshInFlight) return;
+
+      const now = Date.now();
+      if (now - lastVisibilityRefreshAt < visibilityRefreshCooldown) return;
+
+      visibilityRefreshInFlight = true;
+      lastVisibilityRefreshAt = now;
+
+      try {
+        await checkAuthAndReloadMessages();
+        const result = await checkUserLoginStatus();
+        if (result.isLoggedIn === false && result.message) showToast(result.message, 'warning');
+      } catch {
+        // A transient network error should not interrupt the page restore.
+      } finally {
+        visibilityRefreshInFlight = false;
+      }
     };
 
     const clearCache = () => pageCache.clearCache();
