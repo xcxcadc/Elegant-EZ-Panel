@@ -2,7 +2,7 @@
   <div class="elegant-app">
     <header v-if="route.meta.requiresAuth" class="static-layout">
       <button class="site-logo" type="button" @click="router.push('/dashboard')">
-        <span class="site-logo-mark">
+        <span v-if="siteConfig.showLogo" class="site-logo-mark">
           <img v-if="siteConfig.showLogo" src="/images/logo.png" :alt="siteConfig.siteName" class="site-logo-img" />
         </span>
         <span class="site-logo-name">{{ siteConfig.siteName }}</span>

@@ -701,8 +701,25 @@ export default {
 
 
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
+  .language-btn {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
 
+  .language-label,
+  .language-current {
+    display: none !important;
+  }
+
+  .language-btn > .flag-icon {
+    display: flex !important;
+    width: 20px;
+    height: 20px;
+  }
 }
 
 </style>

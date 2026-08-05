@@ -377,6 +377,100 @@ select {
   box-shadow: 0 9px 24px rgba(31, 117, 107, .10);
 }
 
+/* Remove the inherited EZ logo treatment from every responsive surface. */
+.site-logo-mark,
+.auth-logo {
+  display: none !important;
+}
+
+@media (max-width: 1080px) {
+  .elegant-dashboard__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .elegant-plan-card {
+    grid-column: 1 / -1;
+  }
+
+  .elegant-usage__meta strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 768px) {
+  .static-layout {
+    height: 60px;
+  }
+
+  .site-logo {
+    left: 16px !important;
+    gap: 0;
+  }
+
+  .site-logo-name {
+    padding: 0 14px;
+  }
+
+  .top-toolbar {
+    top: max(10px, env(safe-area-inset-top)) !important;
+    right: max(12px, env(safe-area-inset-right)) !important;
+  }
+
+  .language-btn {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  .language-label,
+  .language-current {
+    display: none !important;
+  }
+
+  .language-btn > .flag-icon {
+    display: flex !important;
+    width: 20px;
+    height: 20px;
+  }
+
+  .content-area {
+    width: calc(100% - 24px);
+    padding-top: 76px !important;
+    padding-bottom: calc(36px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .landing-page {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  .landing-page .content-container {
+    width: calc(100% - 32px);
+    max-width: 480px;
+    padding: 28px 22px;
+    border-radius: 26px;
+  }
+
+  .landing-page .site-title {
+    font-size: clamp(30px, 10vw, 48px);
+    line-height: 1.08;
+    letter-spacing: -.06em;
+    gap: 0;
+  }
+
+  .landing-page .landing-text {
+    font-size: clamp(15px, 4.5vw, 20px);
+    line-height: 1.45;
+  }
+
+  .landing-page .scroll-arrow-container {
+    bottom: max(20px, calc(16px + env(safe-area-inset-bottom))) !important;
+  }
+}
+
 @keyframes elegant-landing-aurora-float {
   0% {
     transform: translate3d(-2%, -1.5%, 0) scale(1.08);

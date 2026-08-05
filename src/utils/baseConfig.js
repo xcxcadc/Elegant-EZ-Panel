@@ -203,7 +203,7 @@ const DEFAULT_SITE_CONFIG = {
     copyright: `© ${new Date().getFullYear()} chonglangban. All Rights Reserved.`,
 
     // 是否显示标题中的网站Logo (true=显示, false=隐藏)
-    showLogo: true,
+    showLogo: false,
 
     // Landing页面多语言标语
     landingText: {
