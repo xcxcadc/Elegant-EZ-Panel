@@ -55,8 +55,23 @@
 
         <section class="elegant-card elegant-activity-card">
           <div class="elegant-card__head"><div><span class="elegant-label">流量活动</span><p>近 7 日上传与下载流量</p></div><IconWaveSawTool :size="21" /></div>
-          <div class="elegant-activity-empty"><IconWaveSine :size="23" /><span>暂无足够的活动数据</span><small>数据同步后会显示在这里</small></div>
-          <div class="elegant-week-labels"><span>周一</span><span>周二</span><span>周三</span><span>周四</span><span>周五</span><span>周六</span><span>周日</span></div>
+          <div v-if="trafficActivityHasData" class="elegant-activity-chart">
+            <div class="elegant-activity-bars">
+              <div v-for="day in trafficActivity" :key="day.key" class="elegant-activity-day" :title="`${day.label} · 上传 ${formatTraffic(day.upload)} · 下载 ${formatTraffic(day.download)}`">
+                <div class="elegant-activity-bar-track">
+                  <span class="elegant-activity-bar elegant-activity-bar--download" :style="{ height: `${day.downloadPercent}%` }"></span>
+                  <span class="elegant-activity-bar elegant-activity-bar--upload" :style="{ height: `${day.uploadPercent}%` }"></span>
+                </div>
+                <small>{{ day.label }}</small>
+              </div>
+            </div>
+            <div class="elegant-activity-legend"><span><i class="download"></i>下载</span><span><i class="upload"></i>上传</span></div>
+          </div>
+          <div v-else class="elegant-activity-empty">
+            <IconWaveSine :size="23" />
+            <span>{{ trafficActivityError ? '流量活动加载失败' : '暂无足够的活动数据' }}</span>
+            <small>{{ trafficActivityError ? '请稍后刷新重试' : '数据同步后会显示在这里' }}</small>
+          </div>
         </section>
       </div>
 
@@ -813,6 +828,7 @@ import {
 import CommonDialog from '@/components/popup/CommonDialog.vue';
 import AppCard from '@/components/common/AppCard.vue';
 import {getNotices, getSubscribe, getUserConfig, getUserInfo, getUserStats, setNextPeriod} from '@/api/dashboard';
+import {getTrafficLog} from '@/api/trafficLog';
 import {useToast} from '@/composables/useToast';
 import {submitOrder} from '@/api/shop';
 import MarkdownIt from 'markdown-it';
@@ -1034,6 +1050,9 @@ export default {
       userPlan: true,
       subscribe: true
     });
+
+    const trafficActivity = ref([]);
+    const trafficActivityError = ref(false);
 
     const waterAnimationState = reactive({
       canAnimate: false,
@@ -1469,6 +1488,65 @@ export default {
       }
     };
 
+    const getTrafficDayKey = (date) => {
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${date.getFullYear()}-${month}-${day}`;
+    };
+
+    const fetchTrafficActivity = async () => {
+      trafficActivityError.value = false;
+
+      try {
+        const response = await getTrafficLog();
+        const rows = Array.isArray(response?.data)
+            ? response.data
+            : (Array.isArray(response?.data?.data) ? response.data.data : []);
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const weekdayLabels = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        const days = Array.from({length: 7}, (_, index) => {
+          const date = new Date(now);
+          date.setDate(now.getDate() - (6 - index));
+          return {
+            key: getTrafficDayKey(date),
+            label: weekdayLabels[date.getDay()],
+            upload: 0,
+            download: 0
+          };
+        });
+        const dayMap = new Map(days.map(day => [day.key, day]));
+
+        rows.forEach((row) => {
+          const timestamp = Number(row?.record_at ?? row?.recordAt ?? row?.created_at);
+          if (!Number.isFinite(timestamp)) return;
+
+          const date = new Date(timestamp * 1000);
+          const day = dayMap.get(getTrafficDayKey(date));
+          if (!day) return;
+
+          const serverRate = Number(row?.server_rate ?? row?.serverRate ?? 1);
+          const rate = Number.isFinite(serverRate) && serverRate > 0 ? serverRate : 1;
+          const upload = Number(row?.u ?? row?.upload ?? 0);
+          const download = Number(row?.d ?? row?.download ?? 0);
+          day.upload += Number.isFinite(upload) && upload > 0 ? upload * rate : 0;
+          day.download += Number.isFinite(download) && download > 0 ? download * rate : 0;
+        });
+
+        const maxTotal = Math.max(...days.map(day => day.upload + day.download), 1);
+        trafficActivity.value = days.map(day => ({
+          ...day,
+          total: day.upload + day.download,
+          uploadPercent: day.upload ? Math.max(4, (day.upload / maxTotal) * 100) : 0,
+          downloadPercent: day.download ? Math.max(4, (day.download / maxTotal) * 100) : 0
+        }));
+      } catch (error) {
+        console.error('获取流量活动失败:', error);
+        trafficActivity.value = [];
+        trafficActivityError.value = true;
+      }
+    };
+
     const formatTraffic = formatTrafficSize;
 
     const hasPendingItems = computed(() => {
@@ -1725,6 +1803,8 @@ export default {
 
       fetchUserStats();
 
+      fetchTrafficActivity();
+
       updateQRCodeUrl();
     });
 
@@ -1843,6 +1923,7 @@ export default {
       if (needRefreshData.value) {
         fetchUserInfo();
         fetchUserStats();
+        fetchTrafficActivity();
         fetchNotices();
         needRefreshData.value = false;
       }
@@ -1867,6 +1948,8 @@ export default {
       userStats.remainingTraffic,
       userPlan.value?.totalTraffic
     )));
+
+    const trafficActivityHasData = computed(() => trafficActivity.value.some(day => day.total > 0));
 
     return {
       userStats,
@@ -1957,6 +2040,9 @@ export default {
       showDeviceLimit,
       needRefreshData,
       trafficPercentage,
+      trafficActivity,
+      trafficActivityHasData,
+      trafficActivityError,
       waterAnimationState,
       DASHBOARD_CONFIG,
       allowNewPeriod,

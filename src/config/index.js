@@ -496,7 +496,7 @@ export const config  = {
             closeWaitSeconds: 0
         },
         // 工单图片设置
-        isImageHosting: false, // 是否启用工单图片上传功能
+        isImageHosting: true, // 是否启用工单图片上传功能
         // imgBB 图床 api 设置 前往imgBB注册账号 https://imgbb.com/ 获取 apiKey
         imgbbApiKey: '',
     },

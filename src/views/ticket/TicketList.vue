@@ -805,6 +805,11 @@ const onDropImage = async (e) => {
 const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
+    if (!IMGBB_API_KEY) {
+        showToast('请先在 src/config/index.js 中配置 TICKET_CONFIG.imgbbApiKey', 'warning');
+        if (imageInput.value) imageInput.value.value = '';
+        return;
+    }
     uploadingImages.value = true;
 
     for (const file of files) {
@@ -889,6 +894,9 @@ const fileToBase64 = (file) =>
     });
 
 const uploadToImgbb = async (file) => {
+    if (!IMGBB_API_KEY) {
+        throw new Error('请先在 src/config/index.js 中配置 TICKET_CONFIG.imgbbApiKey');
+    }
     const b64 = await fileToBase64(file);
     const fd = new FormData();
     fd.append('image', b64);

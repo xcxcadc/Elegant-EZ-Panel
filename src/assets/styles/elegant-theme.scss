@@ -623,8 +623,8 @@ select {
 }
 
 .elegant-activity-empty {
-  flex: 1;
-  min-height: 134px;
+    flex: 1;
+    min-height: 134px;
   display: grid;
   align-content: center;
   justify-items: center;
@@ -636,19 +636,87 @@ select {
   font-size: 11px;
 }
 
-.elegant-activity-empty small {
-  font-size: 9px;
-  color: #c2c2c2;
-}
+  .elegant-activity-empty small {
+    font-size: 9px;
+    color: #c2c2c2;
+  }
 
-.elegant-week-labels {
-  padding-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid #f0f0f0;
-  color: #aaa;
-  font-size: 9px;
-}
+  .elegant-activity-chart {
+    flex: 1;
+    min-height: 155px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .elegant-activity-bars {
+    min-height: 124px;
+    padding: 0 3px 8px;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    align-items: end;
+    gap: 8px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .elegant-activity-day {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    color: #aaa;
+    font-size: 9px;
+  }
+
+  .elegant-activity-bar-track {
+    width: 100%;
+    height: 108px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .elegant-activity-bar {
+    width: min(9px, 42%);
+    min-height: 0;
+    border-radius: 5px 5px 2px 2px;
+    transition: height 0.3s ease;
+  }
+
+  .elegant-activity-bar--download {
+    background: linear-gradient(180deg, #8bb9ff, #5f8cf0);
+  }
+
+  .elegant-activity-bar--upload {
+    background: linear-gradient(180deg, #b9eadf, #70cdbb);
+  }
+
+  .elegant-activity-legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    color: #999;
+    font-size: 9px;
+  }
+
+  .elegant-activity-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .elegant-activity-legend i {
+    width: 6px;
+    height: 6px;
+    display: inline-block;
+    border-radius: 50%;
+  }
+
+  .elegant-activity-legend i.download { background: #6f9cf4; }
+  .elegant-activity-legend i.upload { background: #79cfbe; }
 
 .elegant-shortcuts {
   display: grid;
