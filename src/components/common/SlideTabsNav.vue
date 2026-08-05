@@ -47,8 +47,8 @@ export default {
 
     const navItems = computed(() => {
       const map = {
-        docs: { name: 'Docs', path: '/docs', icon: IconFileText, i18nKey: 'docs', badgeKey: 'hot' },
-        invite: { name: 'Invite', path: '/invite', icon: IconInvite, i18nKey: 'invite', badgeKey: INVITE_CONFIG?.showCommissionBadge ? 'commission' : '' },
+        docs: { name: 'Docs', path: '/docs', icon: IconFileText, i18nKey: 'docs' },
+        invite: { name: 'Invite', path: '/invite', icon: IconInvite, i18nKey: 'invite', badgeKey: INVITE_CONFIG?.showCommissionBadge ? 'hot' : '' },
         tickets: { name: 'Tickets', path: '/tickets', icon: IconHeadset, i18nKey: 'tickets' },
         nodes: { name: 'Nodes', path: '/nodes', icon: IconServer, i18nKey: 'nodes' },
         orders: { name: 'Orders', path: '/orders', icon: IconShop, i18nKey: 'orders' },
