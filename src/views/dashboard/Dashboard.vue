@@ -40,14 +40,14 @@
             </div>
           </div>
           <div class="elegant-card__actions">
-            <button type="button" class="elegant-button elegant-button--dark" @click="toggleImportCard"><IconShare :size="15" /> {{ $t('dashboard.importSubscription') }}</button>
+            <button type="button" class="elegant-button elegant-button--primary" @click="toggleImportCard"><IconShare :size="15" /> {{ $t('dashboard.importSubscription') }}</button>
             <button type="button" class="elegant-button" @click="renewPlan"><IconShoppingCart :size="15" /> {{ $t('dashboard.renewPlan') }}</button>
           </div>
         </section>
 
         <section class="elegant-card elegant-summary-card">
           <div class="elegant-card__head"><span class="elegant-label">账户概览</span><IconWallet :size="20" /></div>
-          <div class="elegant-summary-row"><span>订阅导入</span><strong>{{ userPlan.subscribeUrl ? '已生成' : '待生成' }}</strong></div>
+          <button type="button" class="elegant-summary-row elegant-summary-action" @click="toggleImportCard"><span>订阅导入</span><strong>{{ userPlan.subscribeUrl ? '已生成' : '待生成' }} <IconChevronRight :size="13" /></strong></button>
           <div class="elegant-summary-row"><span>{{ $t('dashboard.remainingDays') }}</span><strong>{{ userStats.remainingDays || '—' }}<small>{{ userStats.isRemainingDaysPermanent ? '' : ' 天' }}</small></strong></div>
           <div class="elegant-summary-row"><span>{{ $t('dashboard.accountBalance') }}</span><strong>{{ userStats.accountBalance || `${currencySymbol}0.00` }}</strong></div>
           <button type="button" class="elegant-inline-link" @click="navigateToDeposit">查看账户与充值 <IconChevronRight :size="15" /></button>
@@ -74,6 +74,51 @@
           </div>
         </section>
       </div>
+
+      <transition name="elegant-import-fade">
+        <section v-if="showImportCard && userPlan.subscribeUrl" id="elegant-import-panel" class="elegant-import-panel">
+          <div class="elegant-import-panel__head">
+            <div>
+              <span class="elegant-label">订阅与客户端</span>
+              <h2>{{ $t('dashboard.importSubscription') }}</h2>
+              <p>复制订阅链接，或选择客户端一键导入。</p>
+            </div>
+            <button type="button" class="elegant-import-panel__close" aria-label="关闭订阅导入" @click="showImportCard = false"><IconX :size="17" /></button>
+          </div>
+
+          <div class="elegant-import-link-card">
+            <div class="elegant-import-link-card__main">
+              <span class="elegant-import-link-card__label">当前订阅链接</span>
+              <code>{{ userPlan.subscribeUrl }}</code>
+              <div class="elegant-import-link-card__usage"><span>{{ userStats.remainingTraffic || '0 B' }} / {{ userPlan.totalTraffic || '0 B' }}</span><strong>{{ trafficPercentage }}%</strong></div>
+              <span class="elegant-import-link-card__progress"><i :style="{ width: `${Math.max(0, Math.min(100, trafficPercentage))}%` }"></i></span>
+            </div>
+            <div class="elegant-import-link-card__actions">
+              <button type="button" class="elegant-button elegant-button--primary" @click="copySubscription"><IconCopy :size="15" /> 复制链接</button>
+              <button type="button" class="elegant-button" @click="showQrCode = true"><IconQrcode :size="15" /> 查看二维码</button>
+            </div>
+          </div>
+
+          <div class="elegant-client-import">
+            <div class="elegant-client-import__head">
+              <div><span class="elegant-label">导入到客户端</span><p>选择设备平台，再点击客户端即可自动带入订阅。</p></div>
+            </div>
+            <div class="elegant-platform-tabs" role="tablist" aria-label="客户端平台">
+              <button v-for="platform in platforms" :key="platform.id" type="button" :class="{ active: activePlatform === platform.id }" @click="activePlatform = platform.id">
+                <component :is="platform.icon" :size="15" /> {{ $t(`platforms.${platform.id}`) }}
+              </button>
+            </div>
+            <div v-if="activeImportClients.length" class="elegant-client-grid">
+              <button v-for="client in activeImportClients" :key="client.id" type="button" class="elegant-client-card" @click="importToClient(client.id)">
+                <img :src="client.icon" :alt="client.name" />
+                <span>{{ client.name }}</span>
+                <small>一键导入 <IconChevronRight :size="13" /></small>
+              </button>
+            </div>
+            <div v-else class="elegant-client-empty">当前平台暂未启用客户端，请在客户端配置中开启后再试。</div>
+          </div>
+        </section>
+      </transition>
 
       <div class="elegant-shortcuts">
         <button type="button" class="elegant-shortcut" @click="goToShop"><span class="elegant-shortcut__icon"><IconCopy :size="17" /></span><span><strong>续费订阅</strong><small>快速前往套餐页，继续使用当前订阅</small></span><IconChevronRight :size="15" /></button>
@@ -720,6 +765,21 @@
     </div>
   </div>
 
+  <teleport to="body">
+    <transition name="elegant-qr-fade">
+      <div v-if="showQrCode" class="elegant-qr-overlay" @click="showQrCode = false">
+        <section class="elegant-qr-dialog" @click.stop>
+          <button type="button" class="elegant-import-panel__close" aria-label="关闭二维码" @click="showQrCode = false"><IconX :size="17" /></button>
+          <span class="elegant-label">订阅二维码</span>
+          <h2>{{ $t('dashboard.scanQRCode') }}</h2>
+          <p>使用客户端扫描二维码，快速添加当前订阅。</p>
+          <div class="elegant-qr-code"><img v-if="qrCodeUrl && !qrCodeLoading" :src="qrCodeUrl" alt="订阅二维码" /><span v-else class="elegant-qr-loader">正在生成二维码…</span></div>
+          <button type="button" class="elegant-button elegant-button--primary" @click="copySubscription"><IconCopy :size="15" /> 复制订阅链接</button>
+        </section>
+      </div>
+    </transition>
+  </teleport>
+
   <!-- 重置流量确认弹窗 -->
   <transition name="modal-fade">
     <div class="modal-overlay" v-if="showResetTrafficModal">
@@ -1024,6 +1084,51 @@ export default {
     ];
 
     const activePlatform = ref(detectUserPlatform());
+
+    const importClientDefinitions = {
+      ios: [
+        {setting: 'showShadowrocket', id: 'shadowrocket', name: 'Shadowrocket', icon: shadowrocketIcon},
+        {setting: 'showSurge', id: 'surge', name: 'Surge', icon: surgeIcon},
+        {setting: 'showStash', id: 'stash', name: 'Stash', icon: stashIcon},
+        {setting: 'showQuantumultX', id: 'quantumultx', name: 'Quantumult X', icon: quantumultIcon},
+        {setting: 'showHiddifyIOS', id: 'hiddify-ios', name: 'Hiddify', icon: hiddifyMacIcon},
+        {setting: 'showSingboxIOS', id: 'singbox-ios', name: 'Sing-box', icon: singboxIcon},
+        {setting: 'showLoon', id: 'loon', name: 'Loon', icon: loonIcon}
+      ],
+      android: [
+        {setting: 'showFlClashAndroid', id: 'flclash', name: 'FlClash', icon: flclashIcon},
+        {setting: 'showV2rayNG', id: 'v2rayng', name: 'V2rayNG', icon: v2rayNGIcon},
+        {setting: 'showClashAndroid', id: 'clash-android', name: 'Clash', icon: clashAndroidIcon},
+        {setting: 'showSurfboard', id: 'surfboard', name: 'Surfboard', icon: surfboardIcon},
+        {setting: 'showClashMetaAndroid', id: 'clash-meta-android', name: 'Clash Meta', icon: clashMetaAndroidIcon},
+        {setting: 'showNekobox', id: 'nekobox', name: 'NekoBox', icon: nekoboxIcon},
+        {setting: 'showSingboxAndroid', id: 'singbox-android', name: 'Sing-box', icon: singboxAndroidIcon},
+        {setting: 'showHiddifyAndroid', id: 'hiddify-android', name: 'Hiddify', icon: hiddifyAndroidIcon}
+      ],
+      windows: [
+        {setting: 'showFlClashWindows', id: 'flclash', name: 'FlClash', icon: flclashIcon},
+        {setting: 'showClashVergeWindows', id: 'clashverge', name: 'Clash Verge', icon: clashvergeIcon},
+        {setting: 'showClashWindows', id: 'clash', name: 'Clash', icon: clashWindowsIcon},
+        {setting: 'showNekoray', id: 'nekoray', name: 'NekoRay', icon: nekorayIcon},
+        {setting: 'showSingboxWindows', id: 'singbox-windows', name: 'Sing-box', icon: singboxWindowsIcon},
+        {setting: 'showHiddifyWindows', id: 'hiddify-windows', name: 'Hiddify', icon: hiddifyWindowsIcon}
+      ],
+      macos: [
+        {setting: 'showFlClashMac', id: 'flclash', name: 'FlClash', icon: flclashIcon},
+        {setting: 'showClashVergeMac', id: 'clashverge', name: 'Clash Verge', icon: clashvergeIcon},
+        {setting: 'showClashX', id: 'clashx', name: 'ClashX', icon: clashXIcon},
+        {setting: 'showClashMetaX', id: 'clashx-meta', name: 'ClashX Meta', icon: clashMetaXIcon},
+        {setting: 'showSurgeMac', id: 'surge-mac', name: 'Surge', icon: surgeMacIcon},
+        {setting: 'showStashMac', id: 'stash-mac', name: 'Stash', icon: stashMacIcon},
+        {setting: 'showQuantumultXMac', id: 'quantumultx-mac', name: 'Quantumult X', icon: quantumultXMacIcon},
+        {setting: 'showSingboxMac', id: 'singbox-macos', name: 'Sing-box', icon: singboxMacIcon},
+        {setting: 'showHiddifyMac', id: 'hiddify-macos', name: 'Hiddify', icon: hiddifyMacIcon}
+      ]
+    };
+
+    const activeImportClients = computed(() => (
+      importClientDefinitions[activePlatform.value] || []
+    ).filter(client => clientConfig[client.setting]));
 
     function detectUserPlatform() {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -1754,11 +1859,16 @@ export default {
     };
 
     const toggleImportCard = () => {
+      if (!userPlan.value.subscribeUrl) {
+        showToast('订阅链接暂未生成，请稍后刷新重试', 'warning', 3000);
+        return;
+      }
+
       showImportCard.value = !showImportCard.value;
       if (showImportCard.value) {
         nextTick(() => {
           setTimeout(() => {
-            const importCard = document.querySelector('.import-card');
+            const importCard = document.querySelector('#elegant-import-panel');
             if (importCard) {
               importCard.scrollIntoView({
                 behavior: 'smooth',
@@ -1978,6 +2088,7 @@ export default {
       copySubscription,
       platforms,
       activePlatform,
+      activeImportClients,
       qrCodeUrl,
       qrCodeLoading,
       qrCodeLoaded,
