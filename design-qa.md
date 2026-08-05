@@ -95,6 +95,16 @@
 
 final result: blocked
 
+**Mobile menu top-row correction — 2026-08-05**
+
+- New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-db95ae60-51ad-4ebb-bf93-852cceb5ef61.png`.
+- [P1 fixed in code] The authenticated mobile header now uses the same 64px top row as desktop; the menu trigger no longer drops to a second row.
+- [P1 fixed in code] Mobile content padding was reduced from the two-row header spacing to the single-row spacing, preventing an empty band above the dashboard.
+- Verification: production build and syntax checks passed; the v9 static package includes the new top-row header CSS, route titles, adaptive controls, Chatwoot bridge, and local middleware runtime configuration.
+- Visual evidence gap: this agent cannot drive the user's in-app browser or capture a post-fix device screenshot, so rendered visual QA remains blocked until the user hard-refreshes the preview or uploaded package.
+
+final result: blocked
+
 **Adaptive mobile header and route-title pass — 2026-08-05**
 
 - New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-0b4095d3-e3ea-4a87-aabd-3da47f3d294c.png`, `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-eb6cdd6b-2af7-4693-ab93-f792e539f85c.png`, and `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-2f723242-e620-40ee-8f65-5043f99e3dbc.png`.

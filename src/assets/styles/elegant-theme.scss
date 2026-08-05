@@ -2658,6 +2658,11 @@ body.dark-theme .top-toolbar .theme-toggle {
 }
 
 @media (max-width: 700px) {
+  /* Keep the mobile menu in the same top row as desktop. */
+  .static-layout {
+    height: 64px !important;
+  }
+
   .static-layout .top-toolbar {
     right: max(10px, env(safe-area-inset-right)) !important;
     gap: clamp(5px, 1.8vw, 8px) !important;
@@ -2691,7 +2696,7 @@ body.dark-theme .top-toolbar .theme-toggle {
   }
 
   .static-layout .elegant-menu {
-    top: 62px !important;
+    top: max(10px, env(safe-area-inset-top)) !important;
   }
 
   .static-layout .elegant-menu__trigger {
@@ -2701,7 +2706,7 @@ body.dark-theme .top-toolbar .theme-toggle {
   }
 
   .content-area {
-    padding-top: 122px !important;
+    padding-top: 76px !important;
   }
 }
 
