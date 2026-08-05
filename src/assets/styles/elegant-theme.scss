@@ -3095,6 +3095,14 @@ body.dark-theme .top-toolbar .theme-toggle {
   gap: 16px !important;
 }
 
+/* Dashboard detail cards use whitespace instead of row dividers. */
+.elegant-plan-card .elegant-usage__meta div,
+.elegant-plan-card .elegant-card__actions,
+.elegant-detail-card .elegant-detail-row {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+}
+
 .account-container .rules-grid {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
