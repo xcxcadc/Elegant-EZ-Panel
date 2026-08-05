@@ -3078,6 +3078,13 @@ body.dark-theme .top-toolbar .theme-toggle {
   display: none !important;
 }
 
+.docs-page .doc-category .category-title {
+  margin-left: 0 !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  box-sizing: border-box;
+}
+
 .docs-page .doc-items {
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)) !important;
