@@ -9,7 +9,12 @@
 
     <!-- 内容区域 - 路由视图 -->
 
-    <div class="content-area">
+    <div
+      class="content-area"
+      :class="{
+        'content-area--docs': $route.path === '/docs' || $route.path.startsWith('/docs/')
+      }"
+    >
 
       <router-view v-slot="{ Component }">
 

@@ -3030,14 +3030,23 @@ body.dark-theme .top-toolbar .theme-toggle {
 }
 
 /* Final page-specific overrides: keep docs centered after the global theme rules. */
-.docs-page {
-  position: relative;
-  left: 50%;
+.content-area.content-area--docs {
   width: min(1200px, calc(100vw - 32px)) !important;
   max-width: 1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.docs-page {
+  position: static;
+  left: auto;
+  width: 100% !important;
+  max-width: none !important;
   margin: 0 !important;
   padding: 0 !important;
-  transform: translateX(-50%);
+  transform: none;
 }
 
 .docs-page .docs-inner {
@@ -3087,8 +3096,13 @@ body.dark-theme .top-toolbar .theme-toggle {
 }
 
 @media (max-width: 700px) {
-  .docs-page {
+  .content-area.content-area--docs {
     width: calc(100vw - 24px) !important;
+    max-width: none !important;
+  }
+
+  .docs-page {
+    width: 100% !important;
   }
 
   .account-container .rules-grid {
