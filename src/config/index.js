@@ -66,7 +66,7 @@ export const config  = {
 
     // ====================  网站基础配置  ====================
     SITE_CONFIG: {
-        siteName: 'EZ THEME',
+        siteName: 'Elegant',
         siteDescription: 'EZ UI',
         // copyright会自动使用当前年份
         copyright: `© ${new Date().getFullYear()} EZ THEME. All Rights Reserved.`,

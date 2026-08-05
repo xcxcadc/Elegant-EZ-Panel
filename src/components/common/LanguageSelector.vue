@@ -36,6 +36,8 @@
 
     >
 
+      <span class="language-label">{{ $t('common.language') }}</span>
+
       <span class="flag-icon">
 
         <transition name="flag-fade" mode="out-in">
@@ -45,6 +47,8 @@
         </transition>
 
       </span>
+
+      <span class="language-current">{{ currentLanguageName }}</span>
 
     </button>
 
@@ -213,6 +217,10 @@ export default {
 
     const currentLanguage = computed(() => locale.value);
 
+    const currentLanguageName = computed(() => {
+      return languages.find(lang => lang.code === currentLanguage.value)?.name || '简体中文';
+    });
+
 
 
     const getCurrentLanguageFlag = () => {
@@ -318,6 +326,8 @@ export default {
       languages,
 
       currentLanguage,
+
+      currentLanguageName,
 
       toggleDropdown,
 

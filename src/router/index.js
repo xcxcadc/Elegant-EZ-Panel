@@ -624,6 +624,12 @@ const routes = [
 
 ];
 
+// Local-only visual review mode. It never activates in production builds and
+// lets designers inspect authenticated screens without mutating panel data.
+const isPreviewMode = () => {
+  return import.meta.env.DEV && new URLSearchParams(window.location.search).get('preview') === '1';
+};
+
 
 
 const router = createRouter({
@@ -643,8 +649,13 @@ const router = createRouter({
 
 
 router.beforeEach(async (to, from, next) => {
+  const preview = isPreviewMode();
 
-  if (to.name !== 'BrowserRestricted' && isBrowserRestricted()) {
+  if (preview) {
+    localStorage.setItem('token', 'elegant-preview');
+  }
+
+  if (!preview && to.name !== 'BrowserRestricted' && isBrowserRestricted()) {
 
     next({ name: 'BrowserRestricted' });
 
@@ -654,7 +665,7 @@ router.beforeEach(async (to, from, next) => {
 
   
 
-  if (shouldCheckApiAvailability() && to.name !== 'ApiValidation') {
+  if (!preview && shouldCheckApiAvailability() && to.name !== 'ApiValidation') {
 
     const availableUrl = sessionStorage.getItem('ez_api_available_url');
 
@@ -738,7 +749,7 @@ router.beforeEach(async (to, from, next) => {
 
   
 
-  if (to.meta.requiresAuth && !token) {
+  if (!preview && to.meta.requiresAuth && !token) {
 
     next({ name: 'Login' });
 

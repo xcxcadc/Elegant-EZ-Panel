@@ -1,5 +1,73 @@
 ﻿<template>
   <div class="dashboard-container">
+    <div class="elegant-dashboard">
+      <div class="elegant-page-heading">
+        <div>
+          <h1>{{ $t('menu.dashboard') }}</h1>
+          <p>{{ userStats.userEmail || $t('dashboard.welcomeDesc') }}</p>
+        </div>
+        <span class="elegant-live-dot"><i></i> 在线</span>
+      </div>
+
+      <section class="elegant-dashboard__hero" style="background-image: url('/images/dashboard-hero.png')">
+        <div class="elegant-dashboard__hero-copy">
+          <span class="elegant-eyebrow">ELEGANT NETWORK</span>
+          <strong>{{ $t('dashboard.welcome') }}</strong>
+          <span>{{ $t('dashboard.welcomeDesc') }}</span>
+        </div>
+        <button type="button" class="elegant-hero-action" @click="goToShop">{{ $t('dashboard.purchasePlan') }} <IconChevronRight :size="16" /></button>
+      </section>
+
+      <div class="elegant-dashboard__grid">
+        <section class="elegant-card elegant-plan-card">
+          <div class="elegant-card__head">
+            <div>
+              <span class="elegant-label">{{ $t('dashboard.subscriptionInfo') }}</span>
+              <h2>{{ userPlan.name || $t('dashboard.noSubscription') }}</h2>
+            </div>
+            <span class="elegant-status" :class="{ danger: isExpired, warning: isExpiringSoon && !isExpired }">
+              {{ isExpired ? '已过期' : (isExpiringSoon ? '即将到期' : '使用中') }}
+            </span>
+          </div>
+          <div class="elegant-usage">
+            <div class="elegant-usage__ring" :style="{ '--progress': `${Math.max(0, Math.min(100, trafficPercentage))}%` }">
+              <div><strong>{{ trafficPercentage }}%</strong><span>已用比例</span></div>
+            </div>
+            <div class="elegant-usage__meta">
+              <div><span>{{ $t('dashboard.planTraffic') }}</span><strong>{{ userPlan.totalTraffic || '0 B' }}</strong></div>
+              <div><span>{{ $t('dashboard.remainingTraffic') }}</span><strong>{{ userStats.remainingTraffic || '0 B' }}</strong></div>
+              <div><span>{{ $t('dashboard.expiryDate') }}</span><strong>{{ userPlan.expireDate || '—' }}</strong></div>
+            </div>
+          </div>
+          <div class="elegant-card__actions">
+            <button type="button" class="elegant-button elegant-button--dark" @click="toggleImportCard"><IconShare :size="15" /> {{ $t('dashboard.importSubscription') }}</button>
+            <button type="button" class="elegant-button" @click="renewPlan"><IconShoppingCart :size="15" /> {{ $t('dashboard.renewPlan') }}</button>
+          </div>
+        </section>
+
+        <section class="elegant-card elegant-summary-card">
+          <div class="elegant-card__head"><span class="elegant-label">账户概览</span><IconWallet :size="20" /></div>
+          <div class="elegant-summary-row"><span>订阅导入</span><strong>{{ userPlan.subscribeUrl ? '已生成' : '待生成' }}</strong></div>
+          <div class="elegant-summary-row"><span>{{ $t('dashboard.remainingDays') }}</span><strong>{{ userStats.remainingDays || '—' }}<small>{{ userStats.isRemainingDaysPermanent ? '' : ' 天' }}</small></strong></div>
+          <div class="elegant-summary-row"><span>{{ $t('dashboard.accountBalance') }}</span><strong>{{ userStats.accountBalance || `${currencySymbol}0.00` }}</strong></div>
+          <button type="button" class="elegant-inline-link" @click="navigateToDeposit">查看账户与充值 <IconChevronRight :size="15" /></button>
+        </section>
+
+        <section class="elegant-card elegant-activity-card">
+          <div class="elegant-card__head"><div><span class="elegant-label">流量活动</span><p>近 7 日上传与下载流量</p></div><IconWaveSawTool :size="21" /></div>
+          <div class="elegant-activity-empty"><IconWaveSine :size="23" /><span>暂无足够的活动数据</span><small>数据同步后会显示在这里</small></div>
+          <div class="elegant-week-labels"><span>周一</span><span>周二</span><span>周三</span><span>周四</span><span>周五</span><span>周六</span><span>周日</span></div>
+        </section>
+      </div>
+
+      <div class="elegant-shortcuts">
+        <button type="button" class="elegant-shortcut" @click="goToShop"><span class="elegant-shortcut__icon"><IconCopy :size="17" /></span><span><strong>续费订阅</strong><small>快速前往套餐页，继续使用当前订阅</small></span><IconChevronRight :size="15" /></button>
+        <button type="button" class="elegant-shortcut" @click="openDocumentation"><span class="elegant-shortcut__icon elegant-shortcut__icon--mint"><IconFileText :size="17" /></span><span><strong>文档</strong><small>浏览技术文档和使用教程</small></span><IconChevronRight :size="15" /></button>
+        <button type="button" class="elegant-shortcut" @click="goToSupport"><span class="elegant-shortcut__icon elegant-shortcut__icon--amber"><IconMessage :size="17" /></span><span><strong>客户支持</strong><small>提交工单获取一对一帮助</small></span><IconChevronRight :size="15" /></button>
+      </div>
+    </div>
+
+    <div class="legacy-dashboard">
     <div class="dashboard-inner">
       <AppCard class="dashboard-card welcome-card" :class="{'card-animate': !loading.userInfo}" hoverable no-padding>
         <div class="card-header">
@@ -634,6 +702,7 @@
         @confirm="handlePopupConfirm"
     />
 
+    </div>
   </div>
 
   <!-- 重置流量确认弹窗 -->
