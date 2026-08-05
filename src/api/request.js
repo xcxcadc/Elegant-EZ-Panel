@@ -1,4 +1,4 @@
-﻿
+
 import axios from 'axios';
 import { API_BASE_URL, getApiBaseUrl, isXiaoV2board, isXboard, CUSTOM_HEADERS_CONFIG } from '@/utils/baseConfig';
 import { mapApiPath } from './utils/pathMapper';
@@ -8,10 +8,10 @@ import { readAuthData } from '@/api/client/authToken';
 import { applyCustomHeaders } from '@/api/client/headers';
 import { normalizeRequestError } from '@/api/client/errors';
 
-const isEncrypted = window.EZ_CONFIG &&
-  window.EZ_CONFIG.API_MIDDLEWARE_ENABLED &&
-  window.EZ_CONFIG.API_MIDDLEWARE_KEY &&
-  window.EZ_CONFIG.API_MIDDLEWARE_KEY !== '';
+const isEncrypted = window.CHONGLANGBAN_CONFIG &&
+  window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_ENABLED &&
+  window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_KEY &&
+  window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_KEY !== '';
 
 const request = axios.create({
   baseURL: API_BASE_URL,
@@ -53,10 +53,10 @@ request.interceptors.request.use(
   async config => {
       config.baseURL = getApiBaseUrl();
     
-    if (window.EZ_CONFIG && window.EZ_CONFIG.API_MIDDLEWARE_ENABLED) {
+    if (window.CHONGLANGBAN_CONFIG && window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_ENABLED) {
       const originalUrl = config.url;
       
-      const path = originalUrl.startsWith("http") ? mapApiPath(config.url) : `${window.EZ_CONFIG.API_MIDDLEWARE_PATH}/${btoa(getEncrypUrl(config.url))}`
+      const path = originalUrl.startsWith("http") ? mapApiPath(config.url) : `${window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_PATH}/${btoa(getEncrypUrl(config.url))}`
       
       config.url = isEncrypted ? path : mapApiPath(config.url);
       
@@ -64,9 +64,9 @@ request.interceptors.request.use(
         console.log(`API路径映射: ${originalUrl} -> ${config.url}`);
       }
     }
-    else if (window.EZ_CONFIG && window.EZ_CONFIG.API_BASE_URLS &&
-             Array.isArray(window.EZ_CONFIG.API_BASE_URLS) &&
-             window.EZ_CONFIG.API_BASE_URLS.length > 1) {
+    else if (window.CHONGLANGBAN_CONFIG && window.CHONGLANGBAN_CONFIG.API_BASE_URLS &&
+             Array.isArray(window.CHONGLANGBAN_CONFIG.API_BASE_URLS) &&
+             window.CHONGLANGBAN_CONFIG.API_BASE_URLS.length > 1) {
       const availableApiUrl = getAvailableApiUrl();
       if (availableApiUrl) {
         config.baseURL = availableApiUrl;

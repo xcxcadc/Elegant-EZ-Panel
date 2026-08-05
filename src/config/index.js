@@ -1,6 +1,6 @@
 /**
  * 外部配置文件
- * index.html 中可以搜索 EZ 将其替换为您的网站名称
+ * 站点名称与外部配置均使用 chonglangban 标识
  * logo 摆放位置为 images/logo.png
  */
 
@@ -48,7 +48,7 @@ export const config  = {
     API_MIDDLEWARE_ENABLED: false,
   
     //=======================================================
-    // 中间件服务器URL (不含路径) 开源地址 https://github.com/codeman857/EZ-Encrypt-Middleware
+    // 中间件服务器 URL（保持现有接口兼容配置）
     API_MIDDLEWARE_URL: 'https://d2ijw202als7c.ezdemo.xyz',
   
     // 中间件加密KEY必须是16位的16进制字符串，必须和中间件key保持一致 在线生成地址 https://www.bejson.com/math/hex_gen/
@@ -347,8 +347,8 @@ export const config  = {
 
     // 授权的前端域名列表 (新增)
     AUTHORIZED_DOMAINS: [
-        "test.eztheme.test",
-        "test1.eztheme.test",
+        "test.chonglangban.test",
+        "test1.chonglangban.test",
     ],
 
     // 验证码配置
@@ -617,4 +617,4 @@ export const config  = {
     },
 };
 
-window.EZ_CONFIG = config
+window.CHONGLANGBAN_CONFIG = config

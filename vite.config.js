@@ -16,13 +16,13 @@ const generateRandomFileName = (length = 8) => {
 };
 
 const createRuntimeConfigPlugin = ({ enableConfigJS, enableObfuscation, extraScriptFileName }) => ({
-  name: 'ez-runtime-config',
+  name: 'chonglangban-runtime-config',
   transformIndexHtml(html) {
     if (!enableConfigJS) {
-      return html.replace('<!--EZ_CONFIG_SCRIPT-->', '');
+      return html.replace('<!--CHONGLANGBAN_CONFIG_SCRIPT-->', '');
     }
 
-    return html.replace('<!--EZ_CONFIG_SCRIPT-->', `<script src="./${extraScriptFileName}"></script>`);
+    return html.replace('<!--CHONGLANGBAN_CONFIG_SCRIPT-->', `<script src="./${extraScriptFileName}"></script>`);
   },
   closeBundle() {
     if (!enableConfigJS) return;
@@ -32,8 +32,8 @@ const createRuntimeConfigPlugin = ({ enableConfigJS, enableObfuscation, extraScr
 
     try {
       let content = fs.readFileSync(configPath, 'utf-8');
-      content = content.replace(/window\.EZ_CONFIG\s*=\s*config\s*;?/g, '');
-      content = content.replace(/export\s+const\s+config\s*=/, 'window.EZ_CONFIG =');
+      content = content.replace(/window\.CHONGLANGBAN_CONFIG\s*=\s*config\s*;?/g, '');
+      content = content.replace(/export\s+const\s+config\s*=/, 'window.CHONGLANGBAN_CONFIG =');
 
       if (enableObfuscation) {
         content = JavaScriptObfuscator.obfuscate(content, {

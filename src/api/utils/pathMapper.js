@@ -1,4 +1,4 @@
-﻿
+
 
 const pathMappings = {
   '/guest/comm/config': '/g/conf',
@@ -53,7 +53,7 @@ const pathMappings = {
 
 export function mapApiPath(originalPath) {
   try {
-    if (!window.EZ_CONFIG || !window.EZ_CONFIG.API_MIDDLEWARE_ENABLED) {
+    if (!window.CHONGLANGBAN_CONFIG || !window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_ENABLED) {
       return originalPath;
     }
     

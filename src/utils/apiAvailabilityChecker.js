@@ -1,9 +1,9 @@
 function shouldCheckApiAvailability() {
-  if (typeof window === 'undefined' || !window.EZ_CONFIG) return false;
+  if (typeof window === 'undefined' || !window.CHONGLANGBAN_CONFIG) return false;
   
-  if (window.EZ_CONFIG.API_MIDDLEWARE_ENABLED === true) return false;
+  if (window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_ENABLED === true) return false;
   
-  const apiConfig = window.EZ_CONFIG.API_CONFIG;
+  const apiConfig = window.CHONGLANGBAN_CONFIG.API_CONFIG;
   if (!apiConfig || apiConfig.urlMode !== 'static') return false;
   
   if (apiConfig.showCheckBackend === false) return false;
@@ -16,8 +16,8 @@ function shouldCheckApiAvailability() {
 
 function getAvailableApiUrl() {
   if (!shouldCheckApiAvailability()) {
-    if (window.EZ_CONFIG?.API_CONFIG?.staticBaseUrl) {
-      const urls = window.EZ_CONFIG.API_CONFIG.staticBaseUrl;
+    if (window.CHONGLANGBAN_CONFIG?.API_CONFIG?.staticBaseUrl) {
+      const urls = window.CHONGLANGBAN_CONFIG.API_CONFIG.staticBaseUrl;
       return Array.isArray(urls) ? urls[0] : urls;
     }
     return '';
@@ -28,7 +28,7 @@ function getAvailableApiUrl() {
     return availableUrl;
   }
   
-  return window.EZ_CONFIG.API_CONFIG.staticBaseUrl[0];
+  return window.CHONGLANGBAN_CONFIG.API_CONFIG.staticBaseUrl[0];
 }
 
 

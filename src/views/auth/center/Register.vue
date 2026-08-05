@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 
   <div class="auth-container">
 
@@ -874,7 +874,7 @@ export default {
 
       try {
 
-        if(window.EZ_CONFIG.API_CONFIG.showCheckBackend) {
+        if(window.CHONGLANGBAN_CONFIG.API_CONFIG.showCheckBackend) {
           configLoading.value = true;
         }
 

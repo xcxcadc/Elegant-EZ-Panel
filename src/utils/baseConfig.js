@@ -5,8 +5,8 @@
 import {getAvailableApiUrl} from '@/utils/apiAvailabilityChecker';
 
 const getConfig = (key, defaultValue) => {
-    if (typeof window !== 'undefined' && window.EZ_CONFIG && window.EZ_CONFIG[key] !== undefined) {
-        return window.EZ_CONFIG[key];
+    if (typeof window !== 'undefined' && window.CHONGLANGBAN_CONFIG && window.CHONGLANGBAN_CONFIG[key] !== undefined) {
+        return window.CHONGLANGBAN_CONFIG[key];
     }
     return defaultValue;
 };
@@ -53,18 +53,18 @@ export const isXboard = () => {
 // 获取API基础URL的函数
 export const getApiBaseUrl = () => {
     // 完全依赖config.js中的配置
-    if (typeof window !== 'undefined' && window.EZ_CONFIG) {
+    if (typeof window !== 'undefined' && window.CHONGLANGBAN_CONFIG) {
         // 首先检查是否启用中间件代理
-        if (window.EZ_CONFIG.API_MIDDLEWARE_ENABLED === true && window.EZ_CONFIG.API_MIDDLEWARE_URL) {
+        if (window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_ENABLED === true && window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_URL) {
             // 使用中间件URL和路径
-            const middlewareUrl = window.EZ_CONFIG.API_MIDDLEWARE_URL.trim();
-            const middlewarePath = window.EZ_CONFIG.API_MIDDLEWARE_PATH;
+            const middlewareUrl = window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_URL.trim();
+            const middlewarePath = window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_PATH;
 
             // 确保URL末尾没有斜杠，且路径开头有斜杠，防止出现重复或缺少斜杠
             const formattedUrl = middlewareUrl.endsWith('/') ? middlewareUrl.slice(0, -1) : middlewareUrl;
             const formattedPath = middlewarePath.startsWith('/') ? middlewarePath : `/${middlewarePath}`;
 
-            const middlewareKey = window.EZ_CONFIG.API_MIDDLEWARE_KEY;
+            const middlewareKey = window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_KEY;
             
             if(middlewareKey) {
               return formattedUrl;
@@ -73,8 +73,8 @@ export const getApiBaseUrl = () => {
         }
 
         // 然后检查是否存在API_CONFIG
-        if (window.EZ_CONFIG.API_CONFIG) {
-            const apiConfig = window.EZ_CONFIG.API_CONFIG;
+        if (window.CHONGLANGBAN_CONFIG.API_CONFIG) {
+            const apiConfig = window.CHONGLANGBAN_CONFIG.API_CONFIG;
 
             // 静态URL模式
             if (apiConfig.urlMode === 'static' && apiConfig.staticBaseUrl) {
@@ -198,9 +198,9 @@ export const CUSTOM_HEADERS_CONFIG = mergeDeep(DEFAULT_CUSTOM_HEADERS_CONFIG, ge
 
 // 网站名称配置
 const DEFAULT_SITE_CONFIG = {
-    siteName: 'EZ THEME',
-    siteDescription: 'EZ UI',
-    copyright: `© ${new Date().getFullYear()} EZ THEME. All Rights Reserved.`,
+    siteName: 'chonglangban',
+    siteDescription: 'chonglangban',
+    copyright: `© ${new Date().getFullYear()} chonglangban. All Rights Reserved.`,
 
     // 是否显示标题中的网站Logo (true=显示, false=隐藏)
     showLogo: true,

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 
   <div class="api-validation-page">
 
@@ -158,7 +158,7 @@ export default {
 
     const checkApiAvailability = async () => {
 
-      if (typeof window === 'undefined' || !window.EZ_CONFIG) {
+      if (typeof window === 'undefined' || !window.CHONGLANGBAN_CONFIG) {
 
         navigateToTarget();
 
@@ -168,7 +168,7 @@ export default {
 
       
 
-      if (window.EZ_CONFIG.API_MIDDLEWARE_ENABLED === true) {
+      if (window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_ENABLED === true) {
 
         navigateToTarget();
 
@@ -178,7 +178,7 @@ export default {
 
       
 
-      const apiConfig = window.EZ_CONFIG.API_CONFIG;
+      const apiConfig = window.CHONGLANGBAN_CONFIG.API_CONFIG;
 
       if (!apiConfig || apiConfig.urlMode !== 'static') {
 
@@ -322,9 +322,9 @@ export default {
 
         
 
-        if (window.EZ_CONFIG) {
+        if (window.CHONGLANGBAN_CONFIG) {
 
-          window.EZ_CONFIG._AVAILABLE_API_URL = fastestApi.url;
+          window.CHONGLANGBAN_CONFIG._AVAILABLE_API_URL = fastestApi.url;
 
         }
 
@@ -346,7 +346,7 @@ export default {
 
       console.warn('没有找到可用的API节点，将使用默认的第一个节点');
 
-      const defaultUrl = window.EZ_CONFIG.API_CONFIG.staticBaseUrl[0];
+      const defaultUrl = window.CHONGLANGBAN_CONFIG.API_CONFIG.staticBaseUrl[0];
 
       console.log('使用默认API节点');
 

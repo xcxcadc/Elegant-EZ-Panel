@@ -1,4 +1,4 @@
-﻿import disableDevtool from "disable-devtool";
+import disableDevtool from "disable-devtool";
 
 const env = process.env;
 const isProd = env.NODE_ENV === "production";
@@ -10,7 +10,7 @@ const enableAntiDebugging = env.VUE_APP_DEBUGGING == "true";
     if (!isProd || !enableConfigJS) {
       const res = await import('./config/index.js');
       if (typeof window !== 'undefined') {
-        window.EZ_CONFIG = res.config || res.default || res;
+        window.CHONGLANGBAN_CONFIG = res.config || res.default || res;
       }
     }
     

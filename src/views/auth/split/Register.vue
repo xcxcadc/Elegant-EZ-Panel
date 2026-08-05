@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 
   <div class="register-view-container">
 
@@ -972,7 +972,7 @@ export default {
 
       try {
 
-        if(window.EZ_CONFIG.API_CONFIG.showCheckBackend) {
+        if(window.CHONGLANGBAN_CONFIG.API_CONFIG.showCheckBackend) {
           configLoading.value = true;
         }
 
