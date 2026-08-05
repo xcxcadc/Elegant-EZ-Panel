@@ -1364,6 +1364,22 @@ export default {
       }
     };
 
+    const publishSupportUser = () => {
+      if (!userStats.userEmail) return;
+
+      window.dispatchEvent(new CustomEvent('chonglangban:user-updated', {
+        detail: {
+          email: userStats.userEmail,
+          name: userStats.userEmail.split('@')[0],
+          plan: userPlan.value.name || '',
+          expireTime: userPlan.value.isExpireDatePermanent ? '长期有效' : (userPlan.value.expireDate || ''),
+          usedTraffic: userPlan.value.usedTraffic || '',
+          allTraffic: userPlan.value.totalTraffic || '',
+          balance: userStats.accountBalance || ''
+        }
+      }));
+    };
+
     const fetchUserInfo = async () => {
       if (loading.userInfo === false && Object.keys(userPlan.value).length > 0) return;
 
@@ -1407,6 +1423,7 @@ export default {
             userStats.isRemainingDaysPermanent = true;
           }
         }
+        publishSupportUser();
       } catch (error) {
         console.error('获取用户信息失败:', error);
       } finally {
@@ -1598,6 +1615,7 @@ export default {
             userStats.isRemainingDaysPermanent = true;
           }
         }
+        publishSupportUser();
       } catch (error) {
         console.error('获取订阅信息失败:', error);
       } finally {
