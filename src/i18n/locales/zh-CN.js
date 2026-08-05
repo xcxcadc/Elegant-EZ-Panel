@@ -33,6 +33,7 @@ export default {
         info: '信息',
         toggleTheme: '切换主题',
         language: '语言',
+        menu: '菜单',
         noData: '暂无数据',
         confirm: '确认',
         dashboard: '仪表盘',

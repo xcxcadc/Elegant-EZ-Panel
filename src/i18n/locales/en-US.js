@@ -33,6 +33,7 @@ export default {
         info: 'Info',
         toggleTheme: 'Toggle Theme',
         language: 'Language',
+        menu: 'Menu',
         noData: 'No Data Available',
         confirm: 'Confirm',
         dashboard: 'Dashboard',

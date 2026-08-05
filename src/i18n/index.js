@@ -102,6 +102,12 @@ const getStoredLanguage = () => {
 
 const supportedLocales = ['zh-CN', 'vi-VN', 'en-US', 'zh-TW', 'ja-JP', 'ko-KR', 'ru-RU', 'fa-IR'];
 
+// The local visual preview needs the authenticated locale bundle so every
+// dashboard label renders while the preview token remains development-only.
+const isPreviewMode = () => {
+  return import.meta.env.DEV && new URLSearchParams(window.location.search).get('preview') === '1';
+};
+
 
 
 const loadLocaleMessages = async (isLoggedIn) => {
@@ -277,7 +283,7 @@ export const setLanguage = async (lang) => {
 
   
 
-  const isLoggedIn = checkLoginStatus();
+  const isLoggedIn = isPreviewMode() || checkLoginStatus();
 
   
 
@@ -367,7 +373,7 @@ export const updatePageTitle = () => {
 
 export const reloadMessages = async () => {
 
-  const isLoggedIn = checkLoginStatus();
+  const isLoggedIn = isPreviewMode() || checkLoginStatus();
 
   
 
@@ -431,7 +437,7 @@ export const reloadMessages = async () => {
 
   try {
 
-    const isLoggedIn = checkLoginStatus();
+    const isLoggedIn = isPreviewMode() || checkLoginStatus();
 
     const initialLang = getStoredLanguage();
 
