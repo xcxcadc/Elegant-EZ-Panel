@@ -42,6 +42,5 @@ const initApp = async () => {
   }
 };
 
-initApp();
-
 window.router = router;
+initApp();

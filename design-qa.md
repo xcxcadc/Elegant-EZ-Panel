@@ -95,6 +95,17 @@
 
 final result: blocked
 
+**Adaptive mobile header and route-title pass — 2026-08-05**
+
+- New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-0b4095d3-e3ea-4a87-aabd-3da47f3d294c.png`, `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-eb6cdd6b-2af7-4693-ab93-f792e539f85c.png`, and `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-2f723242-e620-40ee-8f65-5043f99e3dbc.png`.
+- [P1 fixed in code] The static brand-only title was removed; route and locale updates now resolve the current localized page title without being overwritten by initialization.
+- [P1 fixed in code] Mobile content width now uses a full-width box with controlled inner padding, preventing the dashboard from being compressed twice by the old width-plus-padding combination.
+- [P1 fixed in code] Language is now a compact flag button with an adaptive drawer panel. The theme button remains immediately to its left, and header/menu sizes use viewport tiers and `clamp()` values across desktop, tablet, and mobile widths.
+- Verification: production build and JavaScript syntax checks passed; the v8 static package includes the new title, adaptive header CSS, deployment-only Chatwoot bridge, and local middleware runtime configuration.
+- Visual evidence gap: this agent cannot drive the user's in-app browser or capture a post-fix device screenshot, so rendered visual QA remains blocked until the user hard-refreshes the local preview or uploaded package.
+
+final result: blocked
+
 **Route title synchronization pass — 2026-08-05**
 
 - New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-277ce936-6404-4c7d-be48-c56bb5583110.png`, showing a mobile browser tab that should identify the current page rather than only the brand.

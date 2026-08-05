@@ -344,24 +344,28 @@ export const setLanguage = async (lang) => {
 
 
 export const updatePageTitle = () => {
+  const currentRoute = window.router?.currentRoute?.value;
 
-  if (window.router?.currentRoute?.value?.meta?.titleKey) {
+  if (currentRoute?.meta?.titleKey) {
 
-    const titleKey = window.router.currentRoute.value.meta.titleKey;
+    const titleKey = currentRoute.meta.titleKey;
 
     try {
 
       const translatedTitle = i18n.global.t(titleKey);
+      const pageTitle = translatedTitle && translatedTitle !== titleKey
+        ? translatedTitle
+        : currentRoute.name || SITE_CONFIG.siteName;
 
-      document.title = `${translatedTitle} - ${SITE_CONFIG.siteName}`;
+      document.title = `${pageTitle} - ${SITE_CONFIG.siteName}`;
 
     } catch (error) {
 
-      document.title = SITE_CONFIG.siteName;
+      document.title = `${currentRoute.name || SITE_CONFIG.siteName} - ${SITE_CONFIG.siteName}`;
 
     }
 
-  } else if (window.router?.currentRoute?.value) {
+  } else if (currentRoute) {
 
     document.title = SITE_CONFIG.siteName;
 

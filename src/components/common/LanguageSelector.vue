@@ -32,6 +32,10 @@
 
       @click="toggleDropdown"
 
+      :aria-expanded="isOpen"
+
+      aria-haspopup="dialog"
+
       :title="$t('common.language')"
 
     >
@@ -56,7 +60,7 @@
 
     <transition name="fade">
 
-      <div class="language-dropdown" v-if="isOpen" ref="dropdown">
+      <div class="language-dropdown" v-if="isOpen" ref="dropdown" role="dialog" :aria-label="$t('common.language')">
 
         <div
 

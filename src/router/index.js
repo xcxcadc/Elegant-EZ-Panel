@@ -827,6 +827,14 @@ router.afterEach((to) => {
 
 });
 
+// Locale changes do not navigate, so keep the browser tab synchronized when
+// the language drawer changes the active locale in place.
+if (typeof window !== 'undefined') {
+  window.addEventListener('languageChanged', () => {
+    updateRouteTitle(router.currentRoute.value);
+  });
+}
+
 
 
 function getCustomOrDefaultLandingPage() {
