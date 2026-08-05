@@ -95,6 +95,14 @@
 
 final result: blocked
 
+**Tablet breakpoint refinement — 2026-08-05**
+
+- [P1 fixed in code] The supplied 949px screenshot still matched the desktop language layout because the first compact rule began at 768px. The compact language trigger is now 1080px, matching iPad and narrow-window usage while preserving full labels on wide desktop screens.
+- Production build and the post-build Chatwoot behavioral regression test were rerun after this refinement.
+- The final browser-rendered screenshot is still unavailable because the selected in-app browser cannot be driven from this agent session; visual QA remains blocked rather than being inferred from CSS output.
+
+final result: blocked
+
 **Mobile responsive pass — 2026-08-05**
 
 - Source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-df6cdd21-967c-4efa-8a85-6e063faa3291.png`, `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-5f1a0f71-d833-4c0a-bb3e-efdc86839b7f.png`, and `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-4fce9c53-337a-449b-8ae9-987ae25ad93f.png`.
