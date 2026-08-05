@@ -94,3 +94,15 @@
 - Verification: `npm.cmd run build` completed after the fix and `git diff --check` passed. The in-app browser cannot be controlled or captured by this agent, so the actual moon-toggle interaction still requires a user-side refresh and click before visual QA can be marked complete.
 
 final result: blocked
+
+**Mobile responsive pass — 2026-08-05**
+
+- Source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-df6cdd21-967c-4efa-8a85-6e063faa3291.png`, `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-5f1a0f71-d833-4c0a-bb3e-efdc86839b7f.png`, and `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-4fce9c53-337a-449b-8ae9-987ae25ad93f.png`.
+- [P1 fixed in code] Mobile language control exposed desktop copy and occupied too much of the narrow header. It now collapses to a 44px flag button below 768px while preserving the language dropdown.
+- [P1 fixed in code] The inherited EZ logo was rendered by App, Landing, and auth surfaces. Runtime config now defaults `showLogo` to false, App conditionally omits the mark, and the global responsive layer hides remaining auth/logo assets.
+- [P1 fixed in code] At tablet widths the three-column dashboard compressed the plan card until its metadata overflowed. Below 1080px the plan spans the row and account/activity cards share the next row; below 768px the layout remains one column.
+- [P2 fixed in code] Landing now uses `100svh`, safe-area-aware toolbar spacing, narrower glass content, and fluid title sizing for iOS Safari.
+- Behavioral evidence: production build passed; the Chatwoot VM regression test passed SDK bootstrap, consent gating, identity de-duplication, context filtering, and consent revocation.
+- Visual evidence gap: this agent cannot drive the user's in-app browser or capture a post-fix screenshot at iPhone/iPad widths. HTTP/build checks are not a substitute for browser-rendered visual QA. The final result remains blocked until the user checks the compiled package in the selected browser.
+
+final result: blocked
