@@ -39,6 +39,17 @@
         </div>
       </section>
 
+      <section v-if="userStats.pendingOrders > 0" class="elegant-pending-order" role="status">
+        <span class="elegant-pending-order__icon"><IconShoppingCart :size="18" /></span>
+        <div class="elegant-pending-order__copy">
+          <strong>{{ $t('dashboard.pendingOrders') }}（{{ userStats.pendingOrders }}）</strong>
+          <small>存在未处理的订单，完成支付后服务会自动生效。</small>
+        </div>
+        <button type="button" class="elegant-pending-order__action" @click="goToPendingOrders">
+          查看未处理订单 <IconChevronRight :size="15" />
+        </button>
+      </section>
+
       <div class="elegant-dashboard__grid">
         <section class="elegant-card elegant-plan-card">
           <div class="elegant-card__head">
@@ -1745,6 +1756,13 @@ export default {
       return userStats.pendingOrders > 0 || userStats.pendingTickets > 0;
     });
 
+    const goToPendingOrders = () => {
+      router.push({
+        path: '/orders',
+        query: { status: '0' }
+      });
+    };
+
     const prevNotice = () => {
       if (currentNoticeIndex.value > 0) {
         currentNoticeIndex.value--;
@@ -2175,6 +2193,7 @@ export default {
       openDocumentation,
       downloadClient,
       hasPendingItems,
+      goToPendingOrders,
       router,
       currentNoticeIndex,
       prevNotice,

@@ -117,7 +117,7 @@
             
             <div class="status-info" v-if="!loading.order">
               <div class="order-status-notice" :class="getStatusClass(orderDetail.status)">
-                <div class="status-icon">
+                <div class="status-icon" :class="{ 'payment-success-icon': orderDetail.status === 3 || orderDetail.status === 4 }">
                   <IconClock v-if="orderDetail.status === 0 && orderDetail.total_amount > 0" :size="48" />
                   <IconClock v-else-if="orderDetail.status === 0 && orderDetail.total_amount === 0" :size="48" />
                   <IconLoader2 v-else-if="orderDetail.status === 1" :size="48" class="rotating-icon" />
@@ -293,18 +293,27 @@
     <transition name="fade">
       <div class="payment-success-overlay" v-if="showSuccessAnimation">
         <div class="success-animation">
-          <div class="check-container">
-            <div class="check-background">
-              <IconCheck :size="100" class="check-icon" />
-            </div>
-          </div>
+          <div class="success-mascot" aria-hidden="true">
+            <span class="success-mascot__spark success-mascot__spark--one">✦</span>
+            <span class="success-mascot__spark success-mascot__spark--two">✧</span>
+            <span class="success-mascot__spark success-mascot__spark--three">•</span>
+            <span class="success-mascot__hat"></span>
+            <div class="success-mascot__body">
+              <span class="success-mascot__eye success-mascot__eye--left"></span>
+              <span class="success-mascot__eye success-mascot__eye--right"></span>
+              <span class="success-mascot__cheek success-mascot__cheek--left"></span>
+              <span class="success-mascot__cheek success-mascot__cheek--right"></span>
+              <span class="success-mascot__smile"></span>
+              <span class="success-mascot__check"><IconCheck :size="24" /></span>
+            </div>
+          </div>
           <h2>{{ $t('payment.payment_successful') }}</h2>
           <p>{{ $t('payment.payment_successful_desc') }}</p>
         </div>
         <div v-if="showConfettiAnimation" class="confetti-container">
           <ConfettiExplosion
-            :particleCount="150"
-            :force="0.4"
+            :particleCount="90"
+            :force="0.32"
             :stageWidth="window.innerWidth"
             :stageHeight="window.innerHeight"
             :colors="['#ffcc00', '#ff8800', '#ff3333', '#26A65B', '#42A5F5', '#9C27B0']"
@@ -663,7 +672,11 @@ export default {
     };
     
     const performPaymentCheck = async ({ suppressToast = false } = {}) => {
-      if (paymentSuccessful.value || paymentCheckInFlight.value || !orderDetail.value.trade_no) {
+      if (paymentSuccessful.value) {
+        return Number(orderDetail.value.status) || 3;
+      }
+
+      if (paymentCheckInFlight.value || !orderDetail.value.trade_no) {
         return null;
       }
 
@@ -702,6 +715,9 @@ export default {
         return status;
       } catch (error) {
         console.error('检查支付状态失败:', error);
+        if (!suppressToast) {
+          throw error;
+        }
         return null;
       } finally {
         paymentCheckInFlight.value = false;
@@ -770,8 +786,8 @@ export default {
       
       closePaymentModal();
       
-      if (!fromOrderList.value) {
-        showSuccessAnimation.value = true;
+      if (!showSuccessAnimation.value) {
+        showSuccessAnimation.value = true;
         
         nextTick(() => {
           
@@ -791,8 +807,7 @@ export default {
             }, 500);
           }, 4500);
         });
-      } else {
-      }
+      }
     };
     
     const cancelCurrentOrder = () => {
@@ -983,9 +998,7 @@ export default {
       try {
         const status = await performPaymentCheck();
 
-        if (status === null) {
-          showToast(t('payment.check_failed'), 'error');
-        } else if (status === 0 || status === 1) {
+        if (status === 0 || status === 1) {
           showToast(
             status === 1 ? t('payment.payment_processing') : t('payment.payment_pending'),
             'info'
@@ -1048,7 +1061,8 @@ export default {
       
       watch(() => orderDetail.value.status, (newStatus) => {
         if ((newStatus === 3 || newStatus === 4) && !paymentSuccessful.value) {
-          paymentSuccessful.value = true;
+          handlePaymentSuccess(false);
+          return;
           
           if (!fromOrderList.value) {
             showSuccessAnimation.value = true;
@@ -1580,7 +1594,8 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
+    background: linear-gradient(135deg, rgba(237, 253, 248, .92), rgba(240, 248, 255, .94));
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1588,10 +1603,126 @@ export default {
     
     .success-animation {
       text-align: center;
-      color: white;
-      padding: 30px;
-      max-width: 500px;
-      z-index: 1001;
+      color: #16453f;
+      padding: 38px 42px 34px;
+      max-width: 500px;
+      border: 1px solid rgba(137, 213, 196, .65);
+      border-radius: 32px;
+      background: rgba(255, 255, 255, .86);
+      box-shadow: 0 24px 80px rgba(33, 136, 117, .2);
+      z-index: 1001;
+
+      .success-mascot {
+        position: relative;
+        width: 180px;
+        height: 156px;
+        margin: 0 auto 12px;
+        animation: mascot-float 2.8s ease-in-out infinite;
+
+        .success-mascot__body {
+          position: absolute;
+          left: 25px;
+          bottom: 4px;
+          width: 130px;
+          height: 112px;
+          border: 5px solid #149982;
+          border-radius: 48% 48% 42% 42%;
+          background: linear-gradient(145deg, #d9fff4, #a9ead9);
+          box-shadow: inset -12px -10px 0 rgba(66, 171, 151, .13), 0 14px 24px rgba(20, 153, 130, .18);
+        }
+
+        .success-mascot__hat {
+          position: absolute;
+          top: 7px;
+          left: 80px;
+          width: 0;
+          height: 0;
+          border-left: 22px solid transparent;
+          border-right: 22px solid transparent;
+          border-bottom: 42px solid #ffbe68;
+          transform: rotate(11deg);
+          filter: drop-shadow(0 5px 4px rgba(255, 166, 76, .2));
+          z-index: 2;
+        }
+
+        .success-mascot__hat::after {
+          content: '';
+          position: absolute;
+          left: -7px;
+          top: 18px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #ff7f9f;
+          box-shadow: 16px 12px 0 #6fa9ff;
+        }
+
+        .success-mascot__eye,
+        .success-mascot__cheek,
+        .success-mascot__smile,
+        .success-mascot__check {
+          position: absolute;
+          z-index: 3;
+        }
+
+        .success-mascot__eye {
+          top: 36px;
+          width: 10px;
+          height: 15px;
+          border-radius: 50%;
+          background: #16453f;
+        }
+
+        .success-mascot__eye--left { left: 37px; }
+        .success-mascot__eye--right { right: 37px; }
+
+        .success-mascot__cheek {
+          top: 61px;
+          width: 18px;
+          height: 8px;
+          border-radius: 50%;
+          background: rgba(255, 127, 159, .58);
+        }
+
+        .success-mascot__cheek--left { left: 20px; }
+        .success-mascot__cheek--right { right: 20px; }
+
+        .success-mascot__smile {
+          left: 52px;
+          top: 57px;
+          width: 26px;
+          height: 14px;
+          border-bottom: 4px solid #16453f;
+          border-radius: 0 0 24px 24px;
+        }
+
+        .success-mascot__check {
+          right: -17px;
+          bottom: -3px;
+          width: 44px;
+          height: 44px;
+          display: grid;
+          place-items: center;
+          border: 4px solid #fff;
+          border-radius: 50%;
+          background: #ff7f9f;
+          color: #fff;
+          box-shadow: 0 8px 16px rgba(255, 127, 159, .28);
+          animation: check-badge-pop .55s cubic-bezier(.2, 1.4, .4, 1) .25s both;
+        }
+
+        .success-mascot__spark {
+          position: absolute;
+          color: #ffbe68;
+          font-size: 26px;
+          line-height: 1;
+          animation: spark-twinkle 1.8s ease-in-out infinite;
+        }
+
+        .success-mascot__spark--one { top: 29px; left: 12px; }
+        .success-mascot__spark--two { top: 70px; right: 5px; color: #6fa9ff; animation-delay: .35s; }
+        .success-mascot__spark--three { top: 4px; right: 37px; color: #ff7f9f; font-size: 30px; animation-delay: .7s; }
+      }
       
       .check-container {
         margin-bottom: 24px;
@@ -1615,13 +1746,15 @@ export default {
         }
       }
       
-      h2 {
-        font-size: 28px;
+      h2 {
+        color: #16453f;
+        font-size: 28px;
         margin-bottom: 16px;
         animation: slideUp 0.5s ease 0.4s both;
       }
       
-      p {
+      p {
+        color: #6b8580;
         font-size: 16px;
         opacity: 0.8;
         animation: slideUp 0.5s ease 0.6s both;
@@ -1629,7 +1762,23 @@ export default {
     }
     
     
-    .confetti-container {
+    @keyframes mascot-float {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+
+    @keyframes check-badge-pop {
+      0% { transform: scale(0) rotate(-20deg); }
+      70% { transform: scale(1.12) rotate(5deg); }
+      100% { transform: scale(1) rotate(0); }
+    }
+
+    @keyframes spark-twinkle {
+      0%, 100% { opacity: .42; transform: scale(.76) rotate(0); }
+      50% { opacity: 1; transform: scale(1.12) rotate(18deg); }
+    }
+
+    .confetti-container {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -2269,9 +2418,14 @@ export default {
     background-color: rgba(76, 175, 80, 0.12);
     border: 1px solid rgba(76, 175, 80, 0.2);
     
-    .status-icon {
-      color: #4caf50;
-    }
+    .status-icon {
+      color: #4caf50;
+    }
+
+    .status-icon.payment-success-icon {
+      animation: payment-success-icon-pop .6s cubic-bezier(.2, 1.4, .4, 1) both;
+      filter: drop-shadow(0 5px 10px rgba(76, 175, 80, .25));
+    }
     
     h3 {
       color: #388e3c;
@@ -2303,7 +2457,13 @@ export default {
       color: #757575;
     }
   }
-}
+}
+
+@keyframes payment-success-icon-pop {
+  0% { opacity: .35; transform: scale(.55) rotate(-12deg); }
+  70% { opacity: 1; transform: scale(1.12) rotate(4deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
 
 .rotating-icon {
   animation: rotate 2s linear infinite;

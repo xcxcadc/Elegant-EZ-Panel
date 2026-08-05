@@ -734,6 +734,71 @@ body.dark-theme .elegant-menu__item.active {
   margin-top: 14px;
 }
 
+.elegant-pending-order {
+  min-height: 62px;
+  margin-top: 12px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid #f1dcae;
+  border-radius: 17px;
+  background: linear-gradient(105deg, rgba(255, 249, 232, .92), rgba(255, 255, 255, .86));
+  box-shadow: 0 10px 24px rgba(204, 153, 56, .08);
+}
+
+.elegant-pending-order__icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #fff0c9;
+  color: #c18420;
+}
+
+.elegant-pending-order__copy {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: 2px;
+}
+
+.elegant-pending-order__copy strong {
+  color: #4d3820;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.elegant-pending-order__copy small {
+  overflow: hidden;
+  color: #9a8160;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.elegant-pending-order__action {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #ebc978;
+  border-radius: 999px;
+  background: #fff8e8;
+  color: #a96e16;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.elegant-pending-order__action:hover {
+  border-color: #d8aa4f;
+  background: #fff1c9;
+}
+
 .elegant-plan-card {
   grid-column: auto;
 }
@@ -2190,6 +2255,7 @@ body.dark-theme .deposit-container .welcome-card p {
 body.dark-theme .elegant-live-dot,
 body.dark-theme .elegant-card,
 body.dark-theme .elegant-notice-panel,
+body.dark-theme .elegant-pending-order,
 body.dark-theme .elegant-import-panel,
 body.dark-theme .elegant-import-link-card,
 body.dark-theme .elegant-client-card,
@@ -2207,6 +2273,30 @@ body.dark-theme .account-container .dashboard-card {
   border-color: #294950 !important;
   background: #102226 !important;
   box-shadow: 0 14px 32px rgba(0, 0, 0, .16);
+}
+
+body.dark-theme .elegant-pending-order {
+  border-color: #665332 !important;
+  background: linear-gradient(105deg, rgba(73, 57, 28, .7), rgba(16, 34, 38, .88)) !important;
+}
+
+body.dark-theme .elegant-pending-order__icon {
+  background: rgba(255, 193, 91, .14);
+  color: #ffd37b;
+}
+
+body.dark-theme .elegant-pending-order__copy strong {
+  color: #fff0cf !important;
+}
+
+body.dark-theme .elegant-pending-order__copy small {
+  color: #c9b68d !important;
+}
+
+body.dark-theme .elegant-pending-order__action {
+  border-color: #8c6c38;
+  background: rgba(255, 193, 91, .12);
+  color: #ffd37b;
 }
 
 body.dark-theme .elegant-notice-panel__icon {
@@ -2476,6 +2566,21 @@ body.dark-theme .notice-modal .notice-content {
 
   .elegant-notice-panel__actions > .elegant-notice-panel__open {
     flex: 1;
+  }
+
+  .elegant-pending-order {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .elegant-pending-order__copy {
+    flex-basis: calc(100% - 49px);
+  }
+
+  .elegant-pending-order__action {
+    width: 100%;
+    justify-content: center;
+    margin-left: 47px;
   }
 
   .elegant-hero-action {

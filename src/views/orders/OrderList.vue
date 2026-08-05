@@ -217,7 +217,7 @@
 <script setup>
 import { ref, computed, onMounted, inject, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
 import { 
   IconAlertTriangle,
@@ -232,9 +232,10 @@ import {
 import { fetchOrderList, cancelOrder } from '@/api/orderlist';
 import { getCommConfig } from '@/api/shop';
 
-const { t, locale } = useI18n();
-const router = useRouter();
-const $toast = inject('$toast');
+const { t, locale } = useI18n();
+const router = useRouter();
+const route = useRoute();
+const $toast = inject('$toast');
 
 const loading = ref(true);
 const error = ref('');
@@ -315,9 +316,12 @@ const fetchOrders = async () => {
   try {
     const result = await fetchOrderList();
     
-    if (result && result.data) {
-      orders.value = result.data;
-      currentPage.value = 1;
+    if (result && Array.isArray(result.data)) {
+      const requestedStatus = route.query.status;
+      orders.value = requestedStatus === undefined
+        ? result.data
+        : result.data.filter(order => Number(order.status) === Number(requestedStatus));
+      currentPage.value = 1;
     } else {
       orders.value = [];
     }
@@ -492,11 +496,15 @@ onMounted(() => {
   checkMobileView();
 });
 
-watch(locale, () => {
+watch(locale, () => {
   if (orders.value.length > 0) {
     orders.value = [...orders.value];
   }
-});
+});
+
+watch(() => route.query.status, () => {
+  fetchOrders();
+});
 </script>
 
 <style lang="scss" scoped>
