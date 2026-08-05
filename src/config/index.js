@@ -45,7 +45,7 @@ export const config  = {
 
     // 是否启用中间件代理API请求
     // 设置为true时，所有API请求将通过中间件转发
-    API_MIDDLEWARE_ENABLED: false,
+    API_MIDDLEWARE_ENABLED: true,
   
     //=======================================================
     // 中间件服务器 URL（保持现有接口兼容配置）

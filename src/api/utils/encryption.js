@@ -5,7 +5,7 @@ const key = window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_KEY;
 // 获取或生成 IV
 export const randomIv = () => {
   const saveIv = localStorage.getItem('temp_iv');
-  if (saveIv) {
+  if (saveIv && /^[0-9a-f]{16}$/i.test(saveIv)) {
     return saveIv;
   } else {
     const b = new Uint8Array(8);

@@ -8,6 +8,10 @@ import { readAuthData } from '@/api/client/authToken';
 import { applyCustomHeaders } from '@/api/client/headers';
 import { normalizeRequestError } from '@/api/client/errors';
 
+const RETRYABLE_METHODS = new Set(['get', 'head', 'options']);
+const RETRYABLE_STATUS_CODES = new Set([408, 425, 429, 500, 502, 503, 504]);
+const MAX_READ_RETRIES = 2;
+
 const isEncrypted = window.CHONGLANGBAN_CONFIG &&
   window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_ENABLED &&
   window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_KEY &&
@@ -51,14 +55,22 @@ const clearExpiredAuthState = () => {
 
 request.interceptors.request.use(
   async config => {
-      config.baseURL = getApiBaseUrl();
+    config.baseURL = getApiBaseUrl();
+
+    // Preserve the logical endpoint so a retry never encrypts an already mapped URL.
+    const originalUrl = config.__chonglangbanOriginalUrl || config.url;
+    config.__chonglangbanOriginalUrl = originalUrl;
     
     if (window.CHONGLANGBAN_CONFIG && window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_ENABLED) {
-      const originalUrl = config.url;
+      const path = originalUrl.startsWith("http")
+        ? mapApiPath(originalUrl)
+        : `${window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_PATH}/${encodeURIComponent(btoa(getEncrypUrl(originalUrl)))}`;
       
-      const path = originalUrl.startsWith("http") ? mapApiPath(config.url) : `${window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_PATH}/${btoa(getEncrypUrl(config.url))}`
-      
-      config.url = isEncrypted ? path : mapApiPath(config.url);
+      config.url = isEncrypted ? path : mapApiPath(originalUrl);
+
+      if (isEncrypted) {
+        config.headers['X-IV'] = randomIv();
+      }
       
       if (import.meta.env.DEV) {
         console.log(`API路径映射: ${originalUrl} -> ${config.url}`);
@@ -126,6 +138,21 @@ request.interceptors.response.use(
   error => {
     console.error('请求错误:', error);
     
+    const config = error.config;
+    const method = String(config?.method || '').toLowerCase();
+    const status = error.response?.status;
+    const isNetworkFailure = !error.response;
+    const isRetryableStatus = RETRYABLE_STATUS_CODES.has(status);
+    const retryCount = Number(config?.__chonglangbanRetryCount || 0);
+
+    if (config && RETRYABLE_METHODS.has(method) && (isNetworkFailure || isRetryableStatus) && retryCount < MAX_READ_RETRIES) {
+      config.__chonglangbanRetryCount = retryCount + 1;
+      const delay = 250 * (2 ** retryCount) + Math.floor(Math.random() * 150);
+      return new Promise(resolve => {
+        window.setTimeout(() => resolve(request(config)), delay);
+      });
+    }
+
     return Promise.reject(normalizeRequestError(error));
   }
 );

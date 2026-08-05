@@ -95,6 +95,18 @@
 
 final result: blocked
 
+**Mobile header and API middleware pass — 2026-08-05**
+
+- New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-96306c7c-ce78-4017-9f6a-eda80fb57fc0.png` and `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-63549caf-7a9a-4d15-8e16-c29b642e827d.png`.
+- [P1 fixed in code] On narrow authenticated screens, the theme/language toolbar and centered menu previously occupied the same top row. They now use separate rows, and the content start is moved below the 110px mobile header.
+- [P0 fixed in code] The local deployment configuration had middleware disabled, which allowed panel requests to go directly to nskan.com. Middleware mode is now enabled in the build configuration.
+- [P1 fixed in code] Encrypted middleware route segments now URL-encode Base64 output, preventing `/`, `+`, and `=` from being interpreted as path syntax. Read-only requests retry twice with backoff; write requests are not retried.
+- Network evidence: the configured middleware currently responds with Cloudflare 521 from this machine, while nskan.com responds 200. The frontend no longer falls back to nskan.com; the middleware origin/reverse proxy must be restored for mainland clients.
+- Behavioral evidence: production build, runtime-config check, static artifact check, `git diff --check`, and the Chatwoot VM regression test passed. The final deployment package is `Elegant-EZ-Panel-dist-api-middleware-mobile-menu-chatwoot-v5.zip`.
+- Visual evidence gap: this agent cannot drive the user's in-app browser or capture a post-fix mobile screenshot, so final rendered visual QA remains blocked until the user checks it on a real phone.
+
+final result: blocked
+
 **Light landing and toolbar pass — 2026-08-05**
 
 - New source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-95c6c95f-bb30-46ad-826d-62c267c09830.png`, `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-b05973a7-8f85-4a07-8b1c-fe3d74f36228.png`, and `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-258718f3-d247-449b-9453-4fd05881e3bc.png`.

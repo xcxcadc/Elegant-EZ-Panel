@@ -2518,3 +2518,41 @@ body.dark-theme .top-toolbar .theme-toggle {
     box-shadow: 0 18px 42px rgba(28, 104, 96, .16) !important;
   }
 }
+
+/* Mobile authenticated header: toolbar and menu use separate rows. */
+@media (max-width: 700px) {
+  .static-layout {
+    height: 110px !important;
+  }
+
+  .static-layout .top-toolbar {
+    top: max(10px, env(safe-area-inset-top)) !important;
+    right: max(12px, env(safe-area-inset-right)) !important;
+    z-index: 3 !important;
+  }
+
+  .static-layout .elegant-menu {
+    top: 62px !important;
+    z-index: 2 !important;
+  }
+
+  .static-layout .elegant-menu__trigger {
+    min-width: 88px;
+    height: 40px;
+    padding: 0 14px;
+  }
+
+  .content-area {
+    padding-top: 122px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .static-layout .top-toolbar {
+    gap: 6px !important;
+  }
+
+  .static-layout .language-btn {
+    min-width: 126px !important;
+  }
+}
