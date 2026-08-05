@@ -3029,3 +3029,71 @@ body.dark-theme .top-toolbar .theme-toggle {
     padding-top: 126px !important;
   }
 }
+
+/* Final page-specific overrides: keep docs centered after the global theme rules. */
+@supports selector(.content-area:has(.docs-container)) {
+  .content-area:has(> .view-wrapper > .docs-container) {
+    width: min(1200px, calc(100% - 32px)) !important;
+    max-width: 1200px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+.docs-container {
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+}
+
+.docs-inner {
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+.docs-container .welcome-card {
+  display: block !important;
+  margin: 0 0 28px !important;
+  padding: 20px !important;
+  border: 1px solid #e1e7ec !important;
+  border-radius: 14px !important;
+  background: rgba(248, 250, 252, .9) !important;
+  box-shadow: 0 8px 22px rgba(31, 49, 69, .07) !important;
+}
+
+.docs-container .welcome-card .card-header,
+.docs-container .welcome-card .card-body {
+  padding: 0 !important;
+}
+
+.docs-container .welcome-card .card-header {
+  margin-bottom: 12px !important;
+}
+
+.docs-container .docs-title {
+  display: none !important;
+}
+
+.account-container .rules-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.account-container .rules-grid .rule-item {
+  display: flex !important;
+  min-height: 88px;
+}
+
+@media (max-width: 700px) {
+  .content-area:has(> .view-wrapper > .docs-container) {
+    width: calc(100% - 24px) !important;
+    max-width: none !important;
+  }
+
+  .account-container .rules-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
