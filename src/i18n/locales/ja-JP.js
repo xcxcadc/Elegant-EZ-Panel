@@ -251,7 +251,8 @@ export default {
     profile: 'プロフィール',
     more: 'もっと見る',
     commission: 'リベート',
-    hotSale: '人気'
+    hotSale: '人気',
+    hot: '話題'
   },
   more: {
     title: '追加機能',

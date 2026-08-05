@@ -251,7 +251,8 @@ export default {
     profile: '프로필',
     more: '더 보기',
     commission: '커미션',
-    hotSale: '인기 상품'
+    hotSale: '인기 상품',
+    hot: '인기'
   },
   more: {
     title: '추가 기능',

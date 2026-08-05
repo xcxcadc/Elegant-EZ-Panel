@@ -251,7 +251,8 @@ export default {
     profile: '帳號',
     more: '更多',
     commission: '返利',
-    hotSale: '熱銷'
+    hotSale: '熱銷',
+    hot: '火爆'
   },
   more: {
     title: '更多功能',

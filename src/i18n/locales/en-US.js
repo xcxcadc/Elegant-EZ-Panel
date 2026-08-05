@@ -255,7 +255,8 @@ export default {
         profile: 'Profile',
         more: 'More',
         commission: 'Commission',
-        hotSale: 'Hot'
+        hotSale: 'Hot',
+        hot: 'Hot'
     },
     more: {
         title: 'More Features',

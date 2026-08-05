@@ -255,7 +255,8 @@ export default {
         profile: '账号',
         more: '更多',
         commission: '返利',
-        hotSale: '热销'
+        hotSale: '热销',
+        hot: '火爆'
     },
     more: {
         title: '更多功能',

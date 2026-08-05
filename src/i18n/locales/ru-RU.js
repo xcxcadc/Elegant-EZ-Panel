@@ -251,7 +251,8 @@ export default {
     profile: 'Профиль',
     more: 'Еще',
     commission: 'Комиссия',
-    hotSale: 'Горячие продажи'
+    hotSale: 'Горячие продажи',
+    hot: 'Популярно'
   },
   more: {
     title: 'Дополнительные функции',

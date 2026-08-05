@@ -251,7 +251,8 @@ export default {
     profile: 'پروفایل',
     more: 'بیشتر',
     commission: 'کمیسیون',
-    hotSale: 'فروش داغ'
+    hotSale: 'فروش داغ',
+    hot: 'محبوب'
   },
   more: {
     title: 'بیشتر ویژگی ها',

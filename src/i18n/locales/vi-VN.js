@@ -260,7 +260,8 @@ export default {
         profile: 'Hồ sơ',
         more: 'Thêm',
         commission: 'Hoa hồng',
-        hotSale: 'Bán chạy'
+        hotSale: 'Bán chạy',
+        hot: 'Nổi bật'
     },
     more: {
         title: 'Thêm tính năng',
