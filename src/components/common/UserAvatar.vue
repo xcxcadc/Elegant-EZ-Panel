@@ -86,14 +86,22 @@ export default {
     
     const logout = async () => {
       try {
-        localStorage.removeItem('token'); 
+        const isLocalPreview = import.meta.env.DEV && new URLSearchParams(window.location.search).get('preview') === '1';
+
+        // Prevent the local visual-review guard from immediately recreating
+        // its fake token after a user intentionally signs out.
+        if (isLocalPreview) {
+          sessionStorage.setItem('elegant-preview-logged-out', '1');
+        }
+
+        localStorage.removeItem('token');
         isDropdownOpen.value = false;
         
         showToast(t('auth.logoutSuccess'), 'success', 3000);
         
         setTimeout(() => {
-          router.push('/login');
-        }, 500);
+          router.replace('/login?logout=true');
+        }, 300);
       } catch (error) {
         console.error('退出登录失败:', error);
         showToast(t('auth.logoutFailed'), 'error');

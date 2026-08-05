@@ -626,9 +626,14 @@ const routes = [
 
 // Local-only visual review mode. It never activates in production builds and
 // lets designers inspect authenticated screens without mutating panel data.
+const PREVIEW_TOKEN = 'elegant-preview';
+const PREVIEW_LOGGED_OUT_KEY = 'elegant-preview-logged-out';
+
 const isPreviewMode = () => {
   return import.meta.env.DEV && new URLSearchParams(window.location.search).get('preview') === '1';
 };
+
+const isPreviewLoggedOut = () => sessionStorage.getItem(PREVIEW_LOGGED_OUT_KEY) === '1';
 
 
 
@@ -650,9 +655,17 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const preview = isPreviewMode();
+  let previewLoggedOut = preview && isPreviewLoggedOut();
+  const storedToken = localStorage.getItem('token');
 
-  if (preview) {
-    localStorage.setItem('token', 'elegant-preview');
+  // A real API token should take precedence after a user signs in again.
+  if (preview && previewLoggedOut && storedToken && storedToken !== PREVIEW_TOKEN) {
+    sessionStorage.removeItem(PREVIEW_LOGGED_OUT_KEY);
+    previewLoggedOut = false;
+  }
+
+  if (preview && !previewLoggedOut) {
+    localStorage.setItem('token', PREVIEW_TOKEN);
   }
 
   if (!preview && to.name !== 'BrowserRestricted' && isBrowserRestricted()) {
@@ -749,7 +762,7 @@ router.beforeEach(async (to, from, next) => {
 
   
 
-  if (!preview && to.meta.requiresAuth && !token) {
+  if ((previewLoggedOut || !preview) && to.meta.requiresAuth && !token) {
 
     next({ name: 'Login' });
 

@@ -37,6 +37,7 @@
               <div><span>{{ $t('dashboard.planTraffic') }}</span><strong>{{ userPlan.totalTraffic || '0 B' }}</strong></div>
               <div><span>{{ $t('dashboard.remainingTraffic') }}</span><strong>{{ userStats.remainingTraffic || '0 B' }}</strong></div>
               <div><span>{{ $t('dashboard.expiryDate') }}</span><strong>{{ userPlan.expireDate || '—' }}</strong></div>
+              <div><span>在线客户端</span><strong>{{ onlineClientDisplay }}</strong></div>
             </div>
           </div>
           <div class="elegant-card__actions">
@@ -2059,6 +2060,16 @@ export default {
       userPlan.value?.totalTraffic
     )));
 
+    const onlineClientDisplay = computed(() => {
+      const aliveIp = Number(userPlan.value?.aliveIp);
+      const activeClients = Number.isFinite(aliveIp) ? aliveIp : 0;
+      const deviceLimit = userPlan.value?.deviceLimit;
+
+      return deviceLimit === null || deviceLimit === undefined || deviceLimit === ''
+        ? `${activeClients} / 不限`
+        : `${activeClients} / ${deviceLimit}`;
+    });
+
     const trafficActivityHasData = computed(() => trafficActivity.value.some(day => day.total > 0));
 
     return {
@@ -2151,6 +2162,7 @@ export default {
       showDeviceLimit,
       needRefreshData,
       trafficPercentage,
+      onlineClientDisplay,
       trafficActivity,
       trafficActivityHasData,
       trafficActivityError,

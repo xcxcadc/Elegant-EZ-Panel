@@ -1,42 +1,64 @@
 **Comparison target**
 
-- Source visual truth: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-7debc5a3-c735-43d2-958f-549cbc3aacbb.png` (dashboard) and `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-ea0a702c-5f97-4d11-b574-6a4cf5772f1f.png` (subscription import).
-- Intended implementation route: `http://localhost:4173/?preview=1#/dashboard`.
-- Intended state: authenticated dashboard with subscription link present; click “订阅导入”, then select the Windows tab.
+- Source visual truth (dashboard): `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-55540f92-f2b2-4791-b7e8-a845a507d4e5.png` at 952 × 692 px, authenticated dashboard state.
+- Source visual truth (account menu / logout): `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-420ef33f-c042-4f53-99c0-85719ad7da46.png` at 954 × 563 px, account menu open.
+- Source visual truth (shop): `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-f7988184-5a77-40c4-8edf-983e20b76d05.png` at 1280 × 582 px, selected \"all\" plan filter.
+- Reported pre-fix implementation evidence: `C:\Users\AAA\AppData\Local\Temp\codex-clipboard-da515b0a-0f03-4343-8a1d-77d8b8019e38.png` at 912 × 580 px.
+- Intended implementation routes: `http://localhost:4173/?preview=1#/dashboard` and `http://localhost:4173/?preview=1#/shop`.
+- Intended state: desktop, Simplified Chinese, authenticated review preview; dashboard has subscription information and shop has at least two purchasable plans.
 
 **Evidence status**
 
-- Source images were opened at their native desktop dimensions.
-- The implementation compiled successfully with `npm.cmd run build`.
-- A browser-rendered implementation screenshot, console inspection, and interaction capture are unavailable in this thread because the in-app Browser control is not exposed to the agent tool registry. The user can access the local preview in the in-app browser, but the agent cannot capture that tab.
+- The four source images above were opened at native size. No density normalization was needed for source review.
+- The local Vite server is listening on port 4173 and returned HTTP 200. Production build completed with `npm.cmd run build`.
+- The agent does not have an in-app Browser control in this thread, so it cannot take a browser-rendered post-fix screenshot, inspect console output, exercise the account-menu click, or compose the required same-view comparison image. No implementation screenshot path is available. Visual QA is therefore blocked rather than inferred from the source code.
 
-**Static review findings and fixes**
+**Findings**
 
-- [P1 fixed] Subscription import was missing from the visible dashboard because the original EZ import card lived inside the hidden legacy dashboard container.
-  - Fix: added a visible import panel in `src/views/dashboard/Dashboard.vue` with the current subscription URL, copy action, QR dialog, platform tabs, and 30 configured client definitions routed through the original `importToClient` protocol handler.
-- [P1 fixed] Primary buttons used opaque black fills that competed with the reference’s lightweight cards and pastel utility accents.
-  - Fix: replaced black primary controls with the `#6677e8` / `#5264d4` blue-violet token family and applied the token to dashboard controls plus shared ticket and purchase actions.
-- [P2 fixed] The dashboard import affordance did not explain the import workflow or expose platform selection.
-  - Fix: added clear “订阅与客户端” hierarchy, responsive platform tabs, app cards, current traffic progress, and a QR fallback.
+- [P0 fixed in code] Preview logout was visually inert.
+  Location: `src/router/index.js`, `src/components/common/UserAvatar.vue`.
+  Evidence: the visual-review guard recreated `elegant-preview` on every navigation after the avatar menu removed it, so the login route redirected back into the dashboard.
+  Fix: the avatar now sets a session-scoped preview-logout sentinel before removing the fake token; the guard respects it for protected routes and preserves a subsequently issued real API token.
+
+- [P1 fixed in code] The redesigned subscription card omitted the existing EZ online-client count.
+  Location: `src/views/dashboard/Dashboard.vue`.
+  Evidence: `fetchSubscribe` already stores `alive_ip` and `device_limit`, while the visible card only showed traffic and expiry data.
+  Fix: the card now renders `在线客户端` as `alive_ip / device_limit`, with `不限` for an unlimited device cap.
+
+- [P1 fixed in code] Shop filter and primary card hierarchy did not match the supplied Elegant reference.
+  Location: `src/assets/styles/elegant-theme.scss`.
+  Evidence: the reported implementation used a black selected filter and a disconnected lavender first-card background; the source uses a distinct featured-card surface and clear selected filter state.
+  Fix: introduced a shared fresh palette: mint featured-card surface and primary actions, sky-blue selected filter and secondary purchase action, and amber for stock-warning emphasis. The first plan retains its elevated, coloured hierarchy without a dark fill.
+
+- [P2 fixed in code] Blue-violet controls created a disconnected visual system across dashboard, shop, ticket, and import controls.
+  Location: `src/assets/styles/elegant-theme.scss`.
+  Fix: replaced shared primary tokens with mint (`#149982`), light mint surfaces, sky data accents (`#4f91d6`), and warm amber emphasis (`#d29b48`). Traffic bars now use flat data colours rather than decorative gradients.
 
 **Required fidelity surfaces**
 
-- Fonts and typography: code uses the existing Inter / PingFang SC stack; visual verification pending browser capture.
-- Spacing and layout rhythm: the import panel uses the same 21px rounded-card and 10px grid rhythm as the dashboard reference; visual verification pending browser capture.
-- Colors and visual tokens: changed from black to blue-violet primary controls with low-contrast white cards and pastel borders; visual verification pending browser capture.
-- Image quality and asset fidelity: existing client application image assets and the existing mountain hero asset are reused; no placeholder artwork was introduced.
-- Copy and content: import copy, QR action, and client labels are present; live subscription data depends on the connected account API.
+- Fonts and typography: retains Inter / PingFang SC system stack and existing card typography. Browser-side wrapping and optical weight still need capture.
+- Spacing and layout rhythm: keeps the reference-inspired rounded-card grid. Adding one online-client row keeps the existing plan-card rhythm; browser-side card height and responsive wrapping still need capture.
+- Colors and visual tokens: static review confirms all shared primary controls now resolve to mint, selected shop filters to sky, and stock warning to amber. Browser-side contrast and scoped-style precedence still need capture.
+- Image quality and asset fidelity: retains the existing mountain hero and original configured client icons; no replacement image or placeholder artwork was introduced.
+- Copy and content: adds `在线客户端` using the existing subscription API fields. Live value depends on the connected panel account.
 
-**Open questions**
+**Comparison history**
 
-- Browser-side verification remains required for the final visual comparison at the user’s active viewport and with their authenticated account data.
+1. Reported implementation review found inert preview logout, missing online-client visibility, black shop filter, and a lavender card that did not fit the desired fresh system.
+2. Applied session-scoped preview logout, `alive_ip` / `device_limit` display, and mint / sky / amber shared tokens.
+3. A post-fix browser screenshot at the matching route and viewport is unavailable to the agent; the visual comparison loop cannot be completed.
 
 **Implementation checklist**
 
-- [x] Restore subscription import into the visible dashboard.
-- [x] Keep original EZ client import protocols and app asset mappings.
-- [x] Replace visible black primary buttons with blue-violet controls.
+- [x] Ensure preview logout reaches the login screen instead of recreating the review token.
+- [x] Reuse original subscription API fields for online-client statistics.
+- [x] Restore shop featured-card hierarchy with a theme-aligned surface.
+- [x] Replace black and blue-violet shared primary controls with fresh composite tokens.
 - [x] Build production assets successfully.
-- [ ] Capture the running UI and compare it visually to the reference at the same viewport.
+- [ ] Capture dashboard and shop in the user-selected in-app Browser, test logout and shop filter, and compare at the matching viewports.
+
+**Follow-up polish**
+
+- [P3] If a card grid has a business-defined recommended plan rather than a first plan, bind the mint featured treatment to that API flag instead of visual order.
 
 final result: blocked
