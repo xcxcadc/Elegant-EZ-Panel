@@ -3085,6 +3085,10 @@ body.dark-theme .top-toolbar .theme-toggle {
   box-sizing: border-box;
 }
 
+.docs-page .doc-category:first-child {
+  padding-top: 12px;
+}
+
 .docs-page .doc-items {
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)) !important;
