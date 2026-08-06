@@ -110,9 +110,33 @@
 
       
 
-      <section class="shop-ai-guide" aria-label="AI 套餐解读提醒">
+      <section class="shop-ai-guide" aria-label="全球主流 AI 支持说明">
         <div class="shop-ai-guide__icon" aria-hidden="true">
-          <IconAi :size="24" stroke-width="1.8" />
+          <svg class="shop-ai-guide__illustration" viewBox="0 0 64 64" fill="none" role="img">
+            <defs>
+              <linearGradient id="aiGuideShell" x1="13" y1="14" x2="51" y2="51" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#E6FFF6" />
+                <stop offset="1" stop-color="#DDE2FF" />
+              </linearGradient>
+              <linearGradient id="aiGuideFace" x1="20" y1="24" x2="45" y2="44" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FFFFFF" stop-opacity=".96" />
+                <stop offset="1" stop-color="#F0EEFF" stop-opacity=".9" />
+              </linearGradient>
+            </defs>
+            <path d="M32 10V6" stroke="#7E78C9" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="32" cy="5" r="3" fill="#93E8CF" stroke="#7169C9" stroke-width="1.5" />
+            <path d="M13 30H9M55 30h-4" stroke="#8B86D8" stroke-width="2" stroke-linecap="round" />
+            <rect x="13" y="14" width="38" height="38" rx="15" fill="url(#aiGuideShell)" stroke="#7169C9" stroke-width="1.7" />
+            <rect x="19" y="23" width="26" height="20" rx="9" fill="url(#aiGuideFace)" stroke="#A7A1EA" stroke-width="1.3" />
+            <circle cx="27" cy="32" r="2.4" fill="#6C63D8" />
+            <circle cx="37" cy="32" r="2.4" fill="#6C63D8" />
+            <path d="M27 37c2.7 2.5 7.3 2.5 10 0" stroke="#6C63D8" stroke-width="1.8" stroke-linecap="round" />
+            <circle cx="23" cy="37" r="1.5" fill="#F4A6C8" opacity=".7" />
+            <circle cx="41" cy="37" r="1.5" fill="#F4A6C8" opacity=".7" />
+            <path d="M18 20c2-2.6 5-4.2 8.5-4.6" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity=".85" />
+            <path d="M53 17v5M55.5 19.5h-5" stroke="#8D83E4" stroke-width="1.8" stroke-linecap="round" />
+            <path d="M8 42v4M10 44H6" stroke="#83DCC5" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
         </div>
         <div class="shop-ai-guide__copy">
           <div class="shop-ai-guide__eyebrow">{{ $t('shop.aiGuide.eyebrow') }}</div>
@@ -461,8 +485,6 @@ import {
 
   IconCircleCheck,
 
-  IconAi,
-
   IconSparkles
 
 } from '@tabler/icons-vue';
@@ -498,8 +520,6 @@ export default {
     IconCircle,
 
     IconCircleCheck,
-
-    IconAi,
 
     IconSparkles,
 
