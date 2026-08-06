@@ -488,6 +488,12 @@ export default {
   shop: {
     title: '상점',
     description: '사용 가능한 플랜을 확인하고 구매하세요',
+    aiGuide: {
+      eyebrow: '글로벌 AI 지원',
+      title: '판매 중인 모든 플랜에서 주요 AI를 지원합니다',
+      description: '판매 중인 모든 플랜은 ChatGPT, Claude, Gemini, Grok 등 주요 글로벌 AI 서비스를 지원합니다. 원하는 플랜을 선택해 바로 시작할 수 있으며, 실제 이용 가능 여부는 네트워크 환경과 제공업체 정책에 따라 달라질 수 있습니다.',
+      badge: '전 플랜 지원'
+    },
     loading: '플랜 로딩 중...',
     filter: {
       all: '전체',

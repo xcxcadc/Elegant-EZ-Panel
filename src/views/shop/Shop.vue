@@ -110,6 +110,21 @@
 
       
 
+      <section class="shop-ai-guide" aria-label="AI 套餐解读提醒">
+        <div class="shop-ai-guide__icon" aria-hidden="true">
+          <IconAi :size="24" stroke-width="1.8" />
+        </div>
+        <div class="shop-ai-guide__copy">
+          <div class="shop-ai-guide__eyebrow">{{ $t('shop.aiGuide.eyebrow') }}</div>
+          <h2>{{ $t('shop.aiGuide.title') }}</h2>
+          <p>{{ $t('shop.aiGuide.description') }}</p>
+        </div>
+        <span class="shop-ai-guide__badge">
+          <IconSparkles :size="14" />
+          {{ $t('shop.aiGuide.badge') }}
+        </span>
+      </section>
+
       <!-- 筛选选项卡 - 设计成圆形切换按钮 -->
 
       <div class="filter-toggle-container">
@@ -444,7 +459,11 @@ import {
 
   IconCircle,
 
-  IconCircleCheck
+  IconCircleCheck,
+
+  IconAi,
+
+  IconSparkles
 
 } from '@tabler/icons-vue';
 
@@ -479,6 +498,10 @@ export default {
     IconCircle,
 
     IconCircleCheck,
+
+    IconAi,
+
+    IconSparkles,
 
     ShopPopup
 

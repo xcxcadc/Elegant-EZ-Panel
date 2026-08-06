@@ -495,6 +495,12 @@ export default {
     shop: {
         title: 'Shop',
         description: 'Choose a service plan that fits your needs, with clear pricing and flexible billing',
+        aiGuide: {
+            eyebrow: 'GLOBAL AI SUPPORT',
+            title: 'Every plan supports the world\'s leading AI services',
+            description: 'All plans currently on sale support leading AI services such as ChatGPT, Claude, Gemini, and Grok. Choose any plan to get started; actual availability depends on network conditions and provider policies.',
+            badge: 'Supported on all plans'
+        },
         loading: 'Loading plans...',
         filter: {
             all: 'All',

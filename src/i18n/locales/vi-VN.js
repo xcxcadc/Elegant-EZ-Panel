@@ -483,6 +483,12 @@ export default {
         back: 'Quay lại'
     },
     shop: {
+        aiGuide: {
+            eyebrow: 'Hỗ trợ AI toàn cầu',
+            title: 'Tất cả gói đang bán đều hỗ trợ các AI hàng đầu thế giới',
+            description: 'Tất cả gói đang bán đều hỗ trợ các dịch vụ AI phổ biến như ChatGPT, Claude, Gemini và Grok. Chọn bất kỳ gói nào để bắt đầu; khả năng sử dụng thực tế còn phụ thuộc vào mạng và chính sách của nhà cung cấp.',
+            badge: 'Hỗ trợ mọi gói'
+        },
         title: 'Cửa hàng',
         description: 'Xem và mua các gói cước khả dụng',
         loading: 'Đang tải gói cước...',

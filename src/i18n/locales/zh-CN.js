@@ -494,6 +494,12 @@ export default {
     shop: {
         title: '商店',
         description: '按需选择适合你的服务方案，灵活周期，清晰价格，立即开始稳定连接',
+        aiGuide: {
+            eyebrow: '全球 AI 支持',
+            title: '全线在售订阅，支持全球主流 AI',
+            description: '全线在售订阅均支持全球主流 AI 服务，包括 ChatGPT、Claude、Gemini、Grok 等常用应用。选择任意方案即可开始使用，具体体验以实际网络环境与服务商规则为准。',
+            badge: '全线支持'
+        },
         loading: '正在加载套餐...',
         filter: {
             all: '全部',

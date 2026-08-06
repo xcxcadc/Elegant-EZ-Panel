@@ -487,6 +487,12 @@ export default {
   shop: {
     title: 'ストア',
     description: '利用可能なプランを表示・購入',
+    aiGuide: {
+      eyebrow: 'グローバル AI 対応',
+      title: '販売中のすべてのプランで主要 AI を利用できます',
+      description: '販売中のすべてのプランが ChatGPT、Claude、Gemini、Grok など世界の主要 AI サービスに対応しています。お好みのプランを選んで始められますが、実際の利用可否はネットワーク環境と提供元の規約に準じます。',
+      badge: '全プラン対応'
+    },
     loading: 'プラン読み込み中...',
     filter: {
       all: 'すべて',
