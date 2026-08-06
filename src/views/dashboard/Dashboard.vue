@@ -512,7 +512,7 @@
                 <span class="">{{ $t('dashboard.resetTraffic') }}</span>
 
               </button>
-              <button class="btn-outline" v-if="allowNewPeriod==='1'&&showResetTrafficButton" type="button" @click.stop.prevent="openNextPeriodDialog">
+              <button class="btn-outline" v-if="canActivateNewPeriod && isTrafficDepleted" type="button" @click.stop.prevent="openNextPeriodDialog">
                 <IconCalendarPlus :size="16" class="btn-icon"/>
                 <span>{{ $t('dashboard.activateDataCycleInAdvance') }}</span>
               </button>
