@@ -3238,6 +3238,11 @@ body.dark-theme .shop-container .shop-ai-guide__badge {
     gap: 10px 12px;
   }
 
+  .shop-container .shop-ai-guide__icon {
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
   .shop-container .shop-ai-guide__copy {
     grid-column: 2;
   }
