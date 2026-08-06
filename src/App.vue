@@ -74,7 +74,9 @@ import LanguageSelector from '@/components/common/LanguageSelector.vue';
 import UserAvatar from '@/components/common/UserAvatar.vue';
 import { IconGift } from '@tabler/icons-vue';
 
-NProgress.configure({ showSpinner: false, easing: 'ease', speed: 300, minimum: 0.15 });
+NProgress.configure({ showSpinner: false, easing: 'ease', speed: 220, minimum: 0.18 });
+
+const ROUTE_PROGRESS_DELAY = 180;
 
 export default {
   name: 'App',
@@ -105,14 +107,44 @@ export default {
     let visibilityRefreshInFlight = false;
     let lastVisibilityRefreshAt = 0;
     const visibilityRefreshCooldown = 20000;
+    let routeProgressTimer = null;
+    let routeProgressVisible = false;
+    let routeProgressTarget = '';
+
+    const finishRouteProgress = (target = '') => {
+      if (target && target !== routeProgressTarget) return;
+
+      if (routeProgressTimer) {
+        window.clearTimeout(routeProgressTimer);
+        routeProgressTimer = null;
+      }
+
+      if (routeProgressVisible) {
+        NProgress.done();
+        routeProgressVisible = false;
+      }
+
+      routeProgressTarget = '';
+    };
 
     router.beforeEach((to, from, next) => {
       if (to.meta.keepAlive && to.name) pageCache.addRouteToCache(to.name);
       if (from.name && from.meta.keepAlive === false) pageCache.removeRouteFromCache(from.name);
-      NProgress.start();
+
+      finishRouteProgress();
+      if (to.path !== from.path) {
+        routeProgressTarget = to.fullPath;
+        routeProgressTimer = window.setTimeout(() => {
+          if (routeProgressTarget !== to.fullPath) return;
+          routeProgressTimer = null;
+          routeProgressVisible = true;
+          NProgress.start();
+        }, ROUTE_PROGRESS_DELAY);
+      }
       next();
     });
-    router.afterEach(() => NProgress.done());
+    router.afterEach(to => finishRouteProgress(to.fullPath));
+    router.onError(finishRouteProgress);
 
     const handleRedirectParam = () => {
       let redirectParam = route.query.redirect;
@@ -171,6 +203,7 @@ export default {
     onUnmounted(() => {
       window.removeEventListener('languageChanged', onLanguageChanged);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      finishRouteProgress();
     });
 
     return {
@@ -194,13 +227,13 @@ export default {
 
 .page-transition-enter-active,
 .page-transition-leave-active {
-  transition: opacity 180ms ease, transform 180ms ease;
+  transition: opacity 140ms ease;
+  will-change: opacity;
 }
 
 .page-transition-enter-from,
 .page-transition-leave-to {
   opacity: 0;
-  transform: translateY(4px);
 }
 
 .language-transitioning .language-transition-item {
@@ -213,7 +246,14 @@ export default {
 }
 
 #nprogress .bar {
-  background: #111;
+  background: #36a88f;
   height: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition-enter-active,
+  .page-transition-leave-active {
+    transition: none;
+  }
 }
 </style>

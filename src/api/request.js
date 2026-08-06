@@ -10,7 +10,8 @@ import { normalizeRequestError } from '@/api/client/errors';
 
 const RETRYABLE_METHODS = new Set(['get', 'head', 'options']);
 const RETRYABLE_STATUS_CODES = new Set([408, 425, 429, 500, 502, 503, 504]);
-const MAX_READ_RETRIES = 2;
+const MAX_READ_RETRIES = 1;
+const REQUEST_TIMEOUT = 20000;
 
 const isEncrypted = window.CHONGLANGBAN_CONFIG &&
   window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_ENABLED &&
@@ -19,7 +20,7 @@ const isEncrypted = window.CHONGLANGBAN_CONFIG &&
 
 const request = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  timeout: REQUEST_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
     // 只有在加密模式下才添加 X-IV 头
