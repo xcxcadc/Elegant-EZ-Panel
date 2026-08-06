@@ -195,6 +195,9 @@ export default {
         importSubscription: '导入订阅',
         purchasePlan: '购买套餐',
         resetTraffic: '重置流量',
+        purchaseResetTraffic: '购买重置流量包',
+        trafficDepletedTitle: '本周期流量已用完',
+        trafficDepletedDescription: '可以购买重置流量包继续使用，或提前进入下一流量周期。',
         activateDataCycleInAdvance: '提前开启流量周期',
         resetDataCycleNotice:'点击「我知道了」将会扣除当前流量周期剩余订阅时长（按月重置时扣除本周期剩余订阅时长，每月1号重置时扣除整月时间30天，年周期同理），系统将会重置您的已使用流量。',
         nextPeriodError:'提前开启下月失败',
@@ -490,7 +493,7 @@ export default {
     },
     shop: {
         title: '商店',
-        description: '查看并购买可用的套餐',
+        description: '按需选择适合你的服务方案，灵活周期，清晰价格，立即开始稳定连接',
         loading: '正在加载套餐...',
         filter: {
             all: '全部',
@@ -535,13 +538,13 @@ export default {
         },
         stats: {
             global_nodes: '全球节点',
-            global_nodes_desc: '遍布全球的高速节点',
+            global_nodes_desc: '覆盖多地区高速节点，连接体验更从容',
             speed: '极速体验',
-            speed_desc: '高速稳定的网络体验',
+            speed_desc: '低延迟链路，日常访问流畅稳定',
             streaming: '流媒体解锁',
-            streaming_desc: '解锁各类流媒体服务',
+            streaming_desc: '兼容主流流媒体，影音体验更完整',
             devices: '多设备支持',
-            devices_desc: '同时支持多台设备使用'
+            devices_desc: '手机、平板与电脑可同时使用'
         },
         config_error: '获取商店配置失败',
         popup: {

@@ -61,6 +61,14 @@
               {{ isExpired ? '已过期' : (isExpiringSoon ? '即将到期' : '使用中') }}
             </span>
           </div>
+          <div v-if="isTrafficDepleted" class="elegant-plan-depleted" role="status">
+            <img class="elegant-plan-depleted__gif" src="/images/traffic-depleted.gif" alt="流量耗尽提醒动画" />
+            <span class="elegant-plan-depleted__copy">
+              <strong>本周期流量已耗尽</strong>
+              <small>购买流量包，或提前开启下一个流量周期。</small>
+            </span>
+            <i class="elegant-plan-depleted__pulse" aria-hidden="true"></i>
+          </div>
           <div class="elegant-usage">
             <div class="elegant-usage__ring" :style="{ '--progress': `${Math.max(0, Math.min(100, trafficPercentage))}%` }">
               <div><strong>{{ trafficPercentage }}%</strong><span>已用比例</span></div>
@@ -134,6 +142,103 @@
         </section>
       </div>
 
+      <section
+        v-if="isTrafficDepleted"
+        class="elegant-traffic-alert elegant-traffic-alert--danger"
+        role="alert"
+      >
+        <div class="elegant-traffic-alert__copy">
+          <span class="elegant-traffic-alert__icon"><IconAlertTriangle :size="19" /></span>
+          <div>
+            <strong>{{ $t('dashboard.trafficDepletedTitle') }}</strong>
+            <p>{{ $t('dashboard.trafficDepletedDescription') }}</p>
+          </div>
+        </div>
+        <div class="elegant-traffic-alert__actions">
+          <button
+            v-if="showResetTrafficButton"
+            type="button"
+            class="elegant-button elegant-button--danger"
+            @click="openResetTrafficModal"
+          >
+            <IconRefresh :size="15" />
+            {{ $t('dashboard.purchaseResetTraffic') }}
+          </button>
+          <button
+            v-if="canActivateNewPeriod"
+            type="button"
+            class="elegant-button elegant-button--warning"
+            @click.stop.prevent="openNextPeriodDialog"
+          >
+            <IconCalendarPlus :size="15" />
+            {{ $t('dashboard.activateDataCycleInAdvance') }}
+          </button>
+          <button
+            v-if="!showResetTrafficButton && !canActivateNewPeriod"
+            type="button"
+            class="elegant-button elegant-button--warning"
+            @click="goToShop"
+          >
+            <IconShoppingCart :size="15" />
+            前往商店
+          </button>
+        </div>
+      </section>
+
+      <section v-if="isLowTraffic" class="elegant-dashboard-alert elegant-dashboard-alert--warning" role="alert">
+        <div class="elegant-dashboard-alert__copy">
+          <span class="elegant-dashboard-alert__icon"><IconAlertTriangle :size="19" /></span>
+          <div>
+            <strong>流量即将耗尽</strong>
+            <p>当前仅剩 {{ userStats.remainingTraffic }} 流量，建议提前购买重置流量包，以免服务中断。</p>
+          </div>
+        </div>
+        <div class="elegant-dashboard-alert__actions">
+          <button type="button" class="elegant-button elegant-button--warning" @click="handleTrafficWarningAction">
+            <IconShoppingCart :size="15" />
+            {{ showResetTrafficButton ? '购买流量包' : '前往商店' }}
+          </button>
+          <button
+            v-if="!remindTrafficEnabled"
+            type="button"
+            class="elegant-button"
+            :disabled="updatingReminder === 'traffic'"
+            @click="enableEmailReminder('traffic')"
+          >
+            <IconMail :size="15" />
+            {{ updatingReminder === 'traffic' ? '正在开启' : '开启邮件提醒' }}
+          </button>
+          <span v-else class="elegant-reminder-enabled"><IconMail :size="14" /> 邮件提醒已开启</span>
+        </div>
+      </section>
+
+      <section v-if="isExpiringSoon && !isExpired" class="elegant-dashboard-alert elegant-dashboard-alert--expiry" role="alert">
+        <div class="elegant-dashboard-alert__copy">
+          <span class="elegant-dashboard-alert__icon"><IconCalendar :size="19" /></span>
+          <div>
+            <strong>订阅即将到期</strong>
+            <p>当前订阅将在 {{ userStats.remainingDays }} 天后到期，请及时续费，避免节点服务失效。</p>
+          </div>
+        </div>
+        <div class="elegant-dashboard-alert__actions">
+          <button type="button" class="elegant-button elegant-button--primary" @click="renewPlan">
+            <IconShoppingCart :size="15" />
+            立即续费
+          </button>
+          <button
+            v-if="!remindExpireEnabled"
+            type="button"
+            class="elegant-button"
+            :disabled="updatingReminder === 'expire'"
+            @click="enableEmailReminder('expire')"
+          >
+            <IconMail :size="15" />
+            {{ updatingReminder === 'expire' ? '正在开启' : '开启邮件提醒' }}
+          </button>
+          <span v-else class="elegant-reminder-enabled"><IconMail :size="14" /> 邮件提醒已开启</span>
+        </div>
+      </section>
+
       <transition name="elegant-import-fade">
         <section v-if="showImportCard && userPlan.subscribeUrl" id="elegant-import-panel" class="elegant-import-panel">
           <div class="elegant-import-panel__head">
@@ -149,8 +254,8 @@
             <div class="elegant-import-link-card__main">
               <span class="elegant-import-link-card__label">当前订阅链接</span>
               <code>{{ userPlan.subscribeUrl }}</code>
-              <div class="elegant-import-link-card__usage"><span>{{ userStats.remainingTraffic || '0 B' }} / {{ userPlan.totalTraffic || '0 B' }}</span><strong>{{ trafficPercentage }}%</strong></div>
-              <span class="elegant-import-link-card__progress"><i :style="{ width: `${Math.max(0, Math.min(100, trafficPercentage))}%` }"></i></span>
+              <div class="elegant-import-link-card__usage"><span>{{ userStats.remainingTraffic || '0 B' }} / {{ userPlan.totalTraffic || '0 B' }}</span><strong>剩余 {{ remainingTrafficPercentage }}%</strong></div>
+              <span class="elegant-import-link-card__progress"><i :style="{ width: `${Math.max(0, Math.min(100, remainingTrafficPercentage))}%` }"></i></span>
             </div>
             <div class="elegant-import-link-card__actions">
               <button type="button" class="elegant-button elegant-button--primary" @click="copySubscription"><IconCopy :size="15" /> 复制链接</button>
@@ -407,7 +512,7 @@
                 <span class="">{{ $t('dashboard.resetTraffic') }}</span>
 
               </button>
-              <button class="btn-outline" v-if="allowNewPeriod==='1'&&showResetTrafficButton" @click="showPopup=true">
+              <button class="btn-outline" v-if="allowNewPeriod==='1'&&showResetTrafficButton" type="button" @click.stop.prevent="openNextPeriodDialog">
                 <IconCalendarPlus :size="16" class="btn-icon"/>
                 <span>{{ $t('dashboard.activateDataCycleInAdvance') }}</span>
               </button>
@@ -828,17 +933,19 @@
       </AppCard>
     </div>
     <!-- 弹窗组件 -->
-    <CommonDialog
-        :show-dialog="showPopup"
-        :title="$t('invite.withdraw.tip')"
-        :content="$t('dashboard.resetDataCycleNotice')"
-        cancel-button-i18n-key="profile.cancel"
-        confirm-button-i18n-key="profile.iKnow"
-        @close="handlePopupClose"
-        @confirm="handlePopupConfirm"
-    />
+    <teleport to="body">
+      <CommonDialog
+          :show-dialog="showPopup"
+          :title="$t('invite.withdraw.tip')"
+          :content="$t('dashboard.resetDataCycleNotice')"
+          cancel-button-i18n-key="profile.cancel"
+          confirm-button-i18n-key="profile.iKnow"
+          @close="handlePopupClose"
+          @confirm="handlePopupConfirm"
+      />
+    </teleport>
 
-    </div>
+  </div>
   </div>
 
   <teleport to="body">
@@ -964,6 +1071,7 @@ import {
 import CommonDialog from '@/components/popup/CommonDialog.vue';
 import AppCard from '@/components/common/AppCard.vue';
 import {getNotices, getSubscribe, getUserConfig, getUserInfo, getUserStats, setNextPeriod} from '@/api/dashboard';
+import {updateRemindSettings} from '@/api/user';
 import {getTrafficLog} from '@/api/trafficLog';
 import {useToast} from '@/composables/useToast';
 import {submitOrder} from '@/api/shop';
@@ -1000,7 +1108,8 @@ import {
   calculateTrafficPercentage,
   formatTrafficSize,
   isTrafficBelowThreshold,
-  isTrafficEmpty
+  isTrafficEmpty,
+  parseTrafficTextToBytes
 } from './composables/dashboardMetrics';
 
 const md = new MarkdownIt({
@@ -1149,6 +1258,10 @@ export default {
     const showQrCode = ref(false);
     const {showToast} = useToast();
     const qrCodeUrl = ref('');
+    const remindExpireEnabled = ref(false);
+    const remindTrafficEnabled = ref(false);
+    const autoRenewalEnabled = ref(false);
+    const updatingReminder = ref('');
 
     //提前开启下月
     const allowNewPeriod = ref('')
@@ -1169,36 +1282,25 @@ export default {
         {setting: 'showStash', id: 'stash', name: 'Stash', icon: stashIcon},
         {setting: 'showQuantumultX', id: 'quantumultx', name: 'Quantumult X', icon: quantumultIcon},
         {setting: 'showHiddifyIOS', id: 'hiddify-ios', name: 'Hiddify', icon: hiddifyMacIcon},
-        {setting: 'showSingboxIOS', id: 'singbox-ios', name: 'Sing-box', icon: singboxIcon},
         {setting: 'showLoon', id: 'loon', name: 'Loon', icon: loonIcon}
       ],
       android: [
         {setting: 'showFlClashAndroid', id: 'flclash', name: 'FlClash', icon: flclashIcon},
         {setting: 'showV2rayNG', id: 'v2rayng', name: 'V2rayNG', icon: v2rayNGIcon},
-        {setting: 'showClashAndroid', id: 'clash-android', name: 'Clash', icon: clashAndroidIcon},
-        {setting: 'showSurfboard', id: 'surfboard', name: 'Surfboard', icon: surfboardIcon},
         {setting: 'showClashMetaAndroid', id: 'clash-meta-android', name: 'Clash Meta', icon: clashMetaAndroidIcon},
-        {setting: 'showNekobox', id: 'nekobox', name: 'NekoBox', icon: nekoboxIcon},
-        {setting: 'showSingboxAndroid', id: 'singbox-android', name: 'Sing-box', icon: singboxAndroidIcon},
         {setting: 'showHiddifyAndroid', id: 'hiddify-android', name: 'Hiddify', icon: hiddifyAndroidIcon}
       ],
       windows: [
         {setting: 'showFlClashWindows', id: 'flclash', name: 'FlClash', icon: flclashIcon},
         {setting: 'showClashVergeWindows', id: 'clashverge', name: 'Clash Verge', icon: clashvergeIcon},
-        {setting: 'showClashWindows', id: 'clash', name: 'Clash', icon: clashWindowsIcon},
-        {setting: 'showNekoray', id: 'nekoray', name: 'NekoRay', icon: nekorayIcon},
-        {setting: 'showSingboxWindows', id: 'singbox-windows', name: 'Sing-box', icon: singboxWindowsIcon},
         {setting: 'showHiddifyWindows', id: 'hiddify-windows', name: 'Hiddify', icon: hiddifyWindowsIcon}
       ],
       macos: [
         {setting: 'showFlClashMac', id: 'flclash', name: 'FlClash', icon: flclashIcon},
         {setting: 'showClashVergeMac', id: 'clashverge', name: 'Clash Verge', icon: clashvergeIcon},
-        {setting: 'showClashX', id: 'clashx', name: 'ClashX', icon: clashXIcon},
-        {setting: 'showClashMetaX', id: 'clashx-meta', name: 'ClashX Meta', icon: clashMetaXIcon},
         {setting: 'showSurgeMac', id: 'surge-mac', name: 'Surge', icon: surgeMacIcon},
         {setting: 'showStashMac', id: 'stash-mac', name: 'Stash', icon: stashMacIcon},
         {setting: 'showQuantumultXMac', id: 'quantumultx-mac', name: 'Quantumult X', icon: quantumultXMacIcon},
-        {setting: 'showSingboxMac', id: 'singbox-macos', name: 'Sing-box', icon: singboxMacIcon},
         {setting: 'showHiddifyMac', id: 'hiddify-macos', name: 'Hiddify', icon: hiddifyMacIcon}
       ]
     };
@@ -1290,6 +1392,9 @@ export default {
       }, 1000);
     };
     const showPopup = ref(false);
+    const openNextPeriodDialog = () => {
+      showPopup.value = true;
+    };
     const popupConfig = reactive({
 
       title: t('invite.withdraw.tip'),
@@ -1391,6 +1496,43 @@ export default {
       }));
     };
 
+    const enableEmailReminder = async (type) => {
+      if (updatingReminder.value) return;
+
+      const previousExpire = remindExpireEnabled.value;
+      const previousTraffic = remindTrafficEnabled.value;
+      updatingReminder.value = type;
+
+      if (type === 'expire') {
+        remindExpireEnabled.value = true;
+      } else {
+        remindTrafficEnabled.value = true;
+      }
+
+      try {
+        await updateRemindSettings({
+          remind_expire: remindExpireEnabled.value ? 1 : 0,
+          remind_traffic: remindTrafficEnabled.value ? 1 : 0,
+          auto_renewal: autoRenewalEnabled.value ? 1 : 0
+        });
+        showToast(type === 'expire' ? '已开启到期邮件提醒' : '已开启流量邮件提醒', 'success');
+      } catch (error) {
+        remindExpireEnabled.value = previousExpire;
+        remindTrafficEnabled.value = previousTraffic;
+        showToast('邮件提醒设置失败，请稍后重试', 'error');
+      } finally {
+        updatingReminder.value = '';
+      }
+    };
+
+    const handleTrafficWarningAction = () => {
+      if (showResetTrafficButton.value) {
+        openResetTrafficModal();
+      } else {
+        goToShop();
+      }
+    };
+
     const fetchUserInfo = async () => {
       if (loading.userInfo === false && Object.keys(userPlan.value).length > 0) return;
 
@@ -1406,6 +1548,15 @@ export default {
 
           if (info.email) {
             userStats.userEmail = info.email;
+          }
+          if (info.remind_expire !== undefined) {
+            remindExpireEnabled.value = !!info.remind_expire;
+          }
+          if (info.remind_traffic !== undefined) {
+            remindTrafficEnabled.value = !!info.remind_traffic;
+          }
+          if (info.auto_renewal !== undefined) {
+            autoRenewalEnabled.value = !!info.auto_renewal;
           }
           if (info.balance !== undefined) {
             userBalance.value = info.balance;
@@ -1497,15 +1648,20 @@ export default {
       return !isNaN(days) && days <= 0;
     });
 
+    const hasTrafficQuota = computed(() => {
+      const totalBytes = parseTrafficTextToBytes(userPlan.value?.totalTraffic);
+      return Number.isFinite(totalBytes) && totalBytes > 0;
+    });
+
     const isLowTraffic = computed(() => {
-      return isTrafficBelowThreshold(
+      return hasTrafficQuota.value && isTrafficBelowThreshold(
           userStats.remainingTraffic,
           userPlan.value?.totalTraffic,
           DASHBOARD_CONFIG.lowTrafficThreshold
-      ) && !isTrafficDepleted.value;
+        ) && !isTrafficDepleted.value;
     });
 
-    const isTrafficDepleted = computed(() => isTrafficEmpty(userStats.remainingTraffic));
+    const isTrafficDepleted = computed(() => hasTrafficQuota.value && isTrafficEmpty(userStats.remainingTraffic));
 
     const showResetTrafficButton = computed(() => {
       if (!DASHBOARD_CONFIG.enableResetTraffic) return false;
@@ -1520,6 +1676,12 @@ export default {
         default:
           return false;
       }
+    });
+
+    const canActivateNewPeriod = computed(() => {
+      return allowNewPeriod.value === true ||
+        allowNewPeriod.value === 1 ||
+        allowNewPeriod.value === '1';
     });
 
     const showRenewPlanButton = computed(() => {
@@ -1552,9 +1714,9 @@ export default {
       loading.subscribe = true;
       try {
         const response = await getSubscribe();
-        allowNewPeriod.value = response.data.allow_new_period;
         if (response.data) {
           const subscribe = response.data;
+          allowNewPeriod.value = subscribe.allow_new_period;
           if (subscribe.plan && subscribe.plan.name) {
             userPlan.value.name = subscribe.plan.name;
           }
@@ -2159,10 +2321,18 @@ export default {
 
     const needRefreshData = ref(false);
 
-    const trafficPercentage = computed(() => Math.round(calculateTrafficPercentage(
-      userStats.remainingTraffic,
-      userPlan.value?.totalTraffic
-    )));
+    const remainingTrafficPercentage = computed(() => {
+      if (!hasTrafficQuota.value) return 0;
+      return Math.round(calculateTrafficPercentage(
+        userStats.remainingTraffic,
+        userPlan.value?.totalTraffic
+      ));
+    });
+
+    const trafficPercentage = computed(() => {
+      if (!hasTrafficQuota.value) return 0;
+      return Math.max(0, Math.min(100, 100 - remainingTrafficPercentage.value));
+    });
 
     const onlineClientDisplay = computed(() => {
       const aliveIp = Number(userPlan.value?.aliveIp);
@@ -2221,12 +2391,18 @@ export default {
       popupConfig,
       handlePopupClose,
       handlePopupConfirm,
+      openNextPeriodDialog,
       showPopup,
       closeResetTrafficModal,
       createResetTrafficOrder,
       showResetTrafficModal,
       resetConfirmCooldown,
       showResetTrafficButton,
+      handleTrafficWarningAction,
+      enableEmailReminder,
+      remindExpireEnabled,
+      remindTrafficEnabled,
+      updatingReminder,
       isCreatingResetOrder,
       hasIOSClients,
       hasAndroidClients,
@@ -2271,6 +2447,7 @@ export default {
       showDeviceLimit,
       needRefreshData,
       trafficPercentage,
+      remainingTrafficPercentage,
       onlineClientDisplay,
       trafficActivity,
       trafficActivityHasData,
@@ -2280,6 +2457,7 @@ export default {
       DASHBOARD_CONFIG,
       SITE_CONFIG,
       allowNewPeriod,
+      canActivateNewPeriod,
       showImportSubscription,
     };
   }

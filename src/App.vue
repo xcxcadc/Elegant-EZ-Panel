@@ -13,6 +13,15 @@
       <div class="top-toolbar">
         <ThemeToggle />
         <LanguageSelector />
+        <button
+          class="gift-card-shortcut"
+          type="button"
+          :title="$t('profile.giftCard')"
+          :aria-label="$t('profile.giftCard')"
+          @click="router.push('/profile')"
+        >
+          <IconGift :size="19" :stroke-width="1.8" aria-hidden="true" />
+        </button>
         <UserAvatar :username="username" :avatarUrl="avatarUrl" />
       </div>
     </header>
@@ -63,6 +72,7 @@ import SlideTabsNav from '@/components/common/SlideTabsNav.vue';
 import ThemeToggle from '@/components/common/ThemeToggle.vue';
 import LanguageSelector from '@/components/common/LanguageSelector.vue';
 import UserAvatar from '@/components/common/UserAvatar.vue';
+import { IconGift } from '@tabler/icons-vue';
 
 NProgress.configure({ showSpinner: false, easing: 'ease', speed: 300, minimum: 0.15 });
 
@@ -79,7 +89,8 @@ export default {
     SlideTabsNav,
     ThemeToggle,
     LanguageSelector,
-    UserAvatar
+    UserAvatar,
+    IconGift
   },
   setup() {
     const router = useRouter();

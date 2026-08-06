@@ -293,36 +293,36 @@ export const config  = {
         showStash: true,
         showQuantumultX: true,
         showHiddifyIOS: true,
-        showSingboxIOS: true,
+        showSingboxIOS: false,
         showLoon: true,
 
         // Android平台客户端
         showFlClashAndroid: true,
         showV2rayNG: true,
-        showClashAndroid: true,
-        showSurfboard: true,
+        showClashAndroid: false,
+        showSurfboard: false,
         showClashMetaAndroid: true,
-        showNekobox: true,
-        showSingboxAndroid: true,
+        showNekobox: false,
+        showSingboxAndroid: false,
         showHiddifyAndroid: true,
 
         // Windows平台客户端
         showFlClashWindows: true,
         showClashVergeWindows: true,
-        showClashWindows: true,
-        showNekoray: true,
-        showSingboxWindows: true,
+        showClashWindows: false,
+        showNekoray: false,
+        showSingboxWindows: false,
         showHiddifyWindows: true,
 
         // MacOS平台客户端
         showFlClashMac: true,
         showClashVergeMac: true,
-        showClashX: true,
-        showClashMetaX: true,
+        showClashX: false,
+        showClashMetaX: false,
         showSurgeMac: true,
         showStashMac: true,
         showQuantumultXMac: true,
-        showSingboxMac: true,
+        showSingboxMac: false,
         showHiddifyMac: true
     },
 
@@ -439,7 +439,7 @@ export const config  = {
     // 邀请页面配置
     INVITE_CONFIG: {
         // 是否在导航栏的邀请按钮上显示返利标记
-        showCommissionBadge: false,
+        showCommissionBadge: true,
 
         // 返佣记录每页显示数量（最小值为10，API限制每次请求最少需要返回10条记录）
         recordsPerPage: 10,

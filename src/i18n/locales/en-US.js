@@ -195,6 +195,9 @@ export default {
         importSubscription: 'Import Subscription',
         purchasePlan: 'Purchase Plan',
         resetTraffic: 'Reset Traffic',
+        purchaseResetTraffic: 'Buy Traffic Reset',
+        trafficDepletedTitle: 'Traffic is used up for this cycle',
+        trafficDepletedDescription: 'Buy a traffic reset to continue, or start the next data cycle early.',
         activateDataCycleInAdvance: 'Activate data cycle in advance',
         resetDataCycleNotice:'Clicking "Got it" will deduct the remaining subscription time of the current data cycle. The system will reset your used data.',
         nextPeriodError:'Failed to start next month early',
@@ -491,7 +494,7 @@ export default {
     },
     shop: {
         title: 'Shop',
-        description: 'View and purchase available plans',
+        description: 'Choose a service plan that fits your needs, with clear pricing and flexible billing',
         loading: 'Loading plans...',
         filter: {
             all: 'All',
@@ -536,13 +539,13 @@ export default {
         },
         stats: {
             global_nodes: 'Global Nodes',
-            global_nodes_desc: 'High-speed nodes worldwide',
+            global_nodes_desc: 'High-speed nodes across multiple regions',
             speed: 'Blazing Fast',
-            speed_desc: 'High-speed and stable network experience',
+            speed_desc: 'Low-latency routes for a smooth, stable experience',
             streaming: 'Streaming Unlock',
-            streaming_desc: 'Unlock various streaming services',
+            streaming_desc: 'Reliable access to popular streaming platforms',
             devices: 'Multi-Device Support',
-            devices_desc: 'Supports multiple devices simultaneously'
+            devices_desc: 'Use your phone, tablet, and computer together'
         },
         config_error: 'Failed to fetch shop configuration',
         popup: {

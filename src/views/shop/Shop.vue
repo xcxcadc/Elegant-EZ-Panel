@@ -410,7 +410,7 @@
 
 <script>
 
-import { ref, reactive, onMounted, computed, watch, nextTick } from 'vue';
+import { ref, reactive, onActivated, onMounted, computed, watch, nextTick } from 'vue';
 
 import { useI18n } from 'vue-i18n';
 
@@ -696,10 +696,25 @@ export default {
 
     
 
+    const resetShopScrollPosition = () => {
+      const reset = () => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      };
+
+      reset();
+      nextTick(() => {
+        reset();
+        window.requestAnimationFrame(reset);
+      });
+    };
+
+    onActivated(resetShopScrollPosition);
+
     onMounted(() => {
-
+      resetShopScrollPosition();
       selectedFilter.value = 'all';
-
     });
 
     
