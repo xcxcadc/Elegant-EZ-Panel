@@ -498,7 +498,7 @@ export default {
         aiGuide: {
             eyebrow: 'GLOBAL AI SUPPORT',
             title: 'Every plan supports the world\'s leading AI services',
-            description: 'All plans currently on sale support leading AI services such as ChatGPT, Claude, Gemini, and Grok. Choose any plan to get started; actual availability depends on network conditions and provider policies.',
+            description: 'All plans currently on sale support leading AI services such as ChatGPT, Claude, Gemini, and Grok. Choose any plan to get started.',
             badge: 'Supported on all plans'
         },
         loading: 'Loading plans...',

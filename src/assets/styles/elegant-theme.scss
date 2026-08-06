@@ -3080,6 +3080,7 @@ body.dark-theme .elegant-traffic-alert__actions .elegant-button--warning {
 .shop-container .shop-ai-guide {
   width: min(100%, 820px);
   min-height: 104px;
+  box-sizing: border-box;
   margin: 0 auto 24px;
   padding: 18px 22px;
   display: flex;
@@ -3120,6 +3121,7 @@ body.dark-theme .elegant-traffic-alert__actions .elegant-button--warning {
 .shop-container .shop-ai-guide__illustration {
   width: 46px;
   height: 46px;
+  max-width: 100%;
   display: block;
   overflow: visible;
   filter: drop-shadow(0 4px 7px rgba(111, 105, 205, .16));
@@ -3143,6 +3145,7 @@ body.dark-theme .elegant-traffic-alert__actions .elegant-button--warning {
 
 .shop-container .shop-ai-guide h2 {
   margin: 0;
+  overflow-wrap: anywhere;
   color: #263b4d;
   font-size: 16px;
   line-height: 1.35;
@@ -3152,6 +3155,7 @@ body.dark-theme .elegant-traffic-alert__actions .elegant-button--warning {
 .shop-container .shop-ai-guide p {
   max-width: 650px;
   margin: 5px 0 0;
+  overflow-wrap: anywhere;
   color: #738493;
   font-size: 11px;
   line-height: 1.55;
@@ -3225,15 +3229,37 @@ body.dark-theme .shop-container .shop-ai-guide__badge {
   }
 }
 
+@media (max-width: 600px) {
+  .shop-container .shop-ai-guide {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    align-items: start;
+    padding: 16px;
+    gap: 10px 12px;
+  }
+
+  .shop-container .shop-ai-guide__copy {
+    grid-column: 2;
+  }
+
+  .shop-container .shop-ai-guide__badge {
+    grid-column: 2;
+    justify-self: start;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 @media (max-width: 420px) {
   .shop-container .stats-grid {
     grid-template-columns: 1fr !important;
   }
 
   .shop-container .shop-ai-guide {
-    align-items: flex-start;
-    padding: 16px;
-    gap: 12px;
+    grid-template-columns: 48px minmax(0, 1fr);
+    padding: 14px;
+    gap: 9px 10px;
   }
 
   .shop-container .shop-ai-guide__icon {
@@ -3243,7 +3269,9 @@ body.dark-theme .shop-container .shop-ai-guide__badge {
   }
 
   .shop-container .shop-ai-guide__badge {
-    display: none;
+    display: inline-flex;
+    padding: 7px 10px;
+    font-size: 9px;
   }
 
   .shop-container .shop-ai-guide h2 {
@@ -3252,6 +3280,18 @@ body.dark-theme .shop-container .shop-ai-guide__badge {
 }
 
 @media (max-width: 380px) {
+  .shop-container .shop-ai-guide {
+    grid-template-columns: 44px minmax(0, 1fr);
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .shop-container .shop-ai-guide__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
+
   .static-layout .top-toolbar {
     gap: 6px !important;
   }
