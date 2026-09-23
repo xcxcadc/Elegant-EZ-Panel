@@ -1418,7 +1418,11 @@ export default {
         const response = await setNextPeriod()
         console.log(response)
         if (response.data) {
-          await fetchSubscribe()
+          await Promise.all([
+            fetchUserInfo({ force: true }),
+            fetchUserStats({ force: true }),
+            fetchSubscribe({ force: true })
+          ])
           showToast(t('dashboard.nextPeriodSuccess'), 'success');
           showPopup.value = false;
         }
@@ -1533,8 +1537,8 @@ export default {
       }
     };
 
-    const fetchUserInfo = async () => {
-      if (loading.userInfo === false && Object.keys(userPlan.value).length > 0) return;
+    const fetchUserInfo = async ({ force = false } = {}) => {
+      if (!force && loading.userInfo === false && Object.keys(userPlan.value).length > 0) return;
 
       loading.userInfo = true;
       try {
@@ -1701,14 +1705,15 @@ export default {
     });
 
 
-    const fetchSubscribe = async () => {
+    const fetchSubscribe = async ({ force = false } = {}) => {
       // 如果showResetTrafficButton为true，强制执行（跳过缓存逻辑）
       // if (showResetTrafficButton.value) {
       //   // 强制执行，但仍要防止并发
       //   if (loading.subscribe === true) return;
       // } else {
       // 正常的缓存逻辑
-      if (loading.subscribe === false && userPlan.value.subscribeUrl) return;
+      if (loading.subscribe === true) return;
+      if (!force && userPlan.value.subscribeUrl) return;
       // }
 
       loading.subscribe = true;
@@ -1835,8 +1840,8 @@ export default {
       }
     };
 
-    const fetchUserStats = async () => {
-      if (loading.userStats === false && userStats.remainingTraffic !== '0 GB') return;
+    const fetchUserStats = async ({ force = false } = {}) => {
+      if (!force && loading.userStats === false && userStats.remainingTraffic !== '0 GB') return;
 
       loading.userStats = true;
       try {
@@ -2298,8 +2303,9 @@ export default {
     onActivated(() => {
       console.log('Dashboard组件被激活');
       if (needRefreshData.value) {
-        fetchUserInfo();
-        fetchUserStats();
+        fetchUserInfo({ force: true });
+        fetchUserStats({ force: true });
+        fetchSubscribe({ force: true });
         fetchTrafficActivity();
         fetchNotices();
         needRefreshData.value = false;

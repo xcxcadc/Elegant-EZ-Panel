@@ -54,6 +54,34 @@ const clearExpiredAuthState = () => {
   });
 };
 
+const isAuthPage = () => /#\/(login|register|forgot-password)(?:[/?]|$)/i.test(window.location.hash || '');
+
+const hasStoredAuth = () => Boolean(
+  localStorage.getItem('token') ||
+  sessionStorage.getItem('token') ||
+  localStorage.getItem('auth_data') ||
+  sessionStorage.getItem('auth_data')
+);
+
+const isAuthenticationFailure = (error) => {
+  const status = error?.response?.status;
+  const message = String(
+    error?.response?.data?.message ||
+    error?.response?.message ||
+    error?.message ||
+    ''
+  ).toLowerCase();
+
+  return status === 401 || /未登录|登录已过期|登陆已过期|unauthenticated|token.*expired/.test(message);
+};
+
+const redirectToLoginAfterAuthFailure = (error) => {
+  if (!isAuthenticationFailure(error) || !hasStoredAuth() || isAuthPage()) return;
+
+  clearExpiredAuthState();
+  window.location.href = '/#/login';
+};
+
 request.interceptors.request.use(
   async config => {
     config.baseURL = getApiBaseUrl();
@@ -123,10 +151,9 @@ request.interceptors.response.use(
     try {
       const res = response.data;
       
-      if (res && res.message === '未登录或登陆已过期') {
+      if (res && isAuthenticationFailure({ response: { data: res } })) {
         console.log('检测到登录已过期，执行登出操作');
-        clearExpiredAuthState();
-        window.location.href = '/#/login';
+        redirectToLoginAfterAuthFailure({ response: { data: res } });
         return Promise.reject(new Error(res.message));
       }
       
@@ -138,6 +165,8 @@ request.interceptors.response.use(
   },
   error => {
     console.error('请求错误:', error);
+
+    redirectToLoginAfterAuthFailure(error);
     
     const config = error.config;
     const method = String(config?.method || '').toLowerCase();

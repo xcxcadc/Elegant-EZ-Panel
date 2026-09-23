@@ -557,8 +557,17 @@ export const checkUserLoginStatus = async () => {
     }
   } catch (error) {
     console.error('检查登录状态失败:', error);
-    
-    if (error.response && error.response.data && error.response.data.message === '未登录或登陆已过期') {
+
+    const status = error?.response?.status;
+    const message = String(
+      error?.response?.data?.message ||
+      error?.response?.message ||
+      error?.message ||
+      ''
+    ).toLowerCase();
+    const isAuthenticationFailure = status === 401 || /未登录|登录已过期|登陆已过期|unauthenticated|token.*expired/.test(message);
+
+    if (isAuthenticationFailure) {
       forceLogout();
       
       const currentRoute = window.location.pathname;

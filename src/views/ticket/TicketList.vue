@@ -788,6 +788,21 @@ const insertImage = (url) => {
 const IMGBB_API_URL = 'https://api.imgbb.com/1/upload';
 const IMGBB_API_KEY = TICKET_CONFIG.imgbbApiKey;
 
+const fetchWithTimeout = async (url, options, timeout = 15000) => {
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), timeout);
+    try {
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        if (!response.ok) throw new Error(`图片服务返回 HTTP ${response.status}`);
+        return response;
+    } catch (error) {
+        if (error.name === 'AbortError') throw new Error('图片上传超时，请稍后重试');
+        throw error;
+    } finally {
+        window.clearTimeout(timer);
+    }
+};
+
 const triggerImageInput = () => {
     imageInput.value && imageInput.value.click();
 };
@@ -830,7 +845,7 @@ const handleImageUpload = async (e) => {
             const formData = new FormData();
             formData.append('image', base64);
 
-            const res = await fetch(`${IMGBB_API_URL}?key=${IMGBB_API_KEY}`, {
+            const res = await fetchWithTimeout(`${IMGBB_API_URL}?key=${IMGBB_API_KEY}`, {
                 method: 'POST',
                 body: formData
             });
@@ -900,7 +915,7 @@ const uploadToImgbb = async (file) => {
     const b64 = await fileToBase64(file);
     const fd = new FormData();
     fd.append('image', b64);
-    const res = await fetch(`${IMGBB_API_URL}?key=${IMGBB_API_KEY}`, {
+    const res = await fetchWithTimeout(`${IMGBB_API_URL}?key=${IMGBB_API_KEY}`, {
         method: 'POST',
         body: fd
     });
@@ -924,7 +939,7 @@ const handleReplyImageUpload = async (e) => {
             const md = `![image](${url})`;
             await insertAtCursorToReply(md);
         }
-        showToast($t?.('tickets.uploadSuccess') || '图片上传成功', 'success');
+        showToast(t('tickets.uploadSuccess') || '图片上传成功', 'success');
     } catch (err) {
         console.error(err);
         showToast(err.message || '图片上传异常', 'error');

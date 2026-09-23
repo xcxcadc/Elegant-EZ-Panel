@@ -1059,28 +1059,11 @@ export default {
         fromOrderList.value = false;
       }
       
-      watch(() => orderDetail.value.status, (newStatus) => {
-        if ((newStatus === 3 || newStatus === 4) && !paymentSuccessful.value) {
+      watch(() => orderDetail.value.status, (newStatus) => {
+        if ((newStatus === 3 || newStatus === 4) && !paymentSuccessful.value) {
           handlePaymentSuccess(false);
-          return;
-          
-          if (!fromOrderList.value) {
-            showSuccessAnimation.value = true;
-            nextTick(() => {
-              setTimeout(() => {
-                showConfettiAnimation.value = true;
-              }, 300);
-              
-              setTimeout(() => {
-                showConfettiAnimation.value = false;
-                setTimeout(() => {
-                  showSuccessAnimation.value = false;
-                }, 500);
-              }, 4500);
-            });
-          }
-        }
-      }, { immediate: false });
+        }
+      }, { immediate: false });
     });
     
     onBeforeUnmount(() => {
