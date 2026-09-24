@@ -1027,6 +1027,7 @@ import {
 import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 import {CLIENT_CONFIG, DASHBOARD_CONFIG, isXiaoV2board, SITE_CONFIG} from '@/utils/baseConfig';
+import {getProtectedSubscriptionUrl} from '@/api/utils/encryption';
 import {
   IconAlertTriangle,
   IconBox,
@@ -1332,7 +1333,9 @@ export default {
       userStats: true,
       notices: true,
       userPlan: true,
-      subscribe: true
+      // fetchSubscribe uses this flag as an in-flight guard; it must start false
+      // so the first subscription request is not mistaken for an active request.
+      subscribe: false
     });
 
     const trafficActivity = ref([]);
@@ -1765,7 +1768,7 @@ export default {
             userPlan.value.resetDay = subscribe.reset_day;
           }
           if (subscribe.subscribe_url) {
-            userPlan.value.subscribeUrl = subscribe.subscribe_url;
+            userPlan.value.subscribeUrl = await getProtectedSubscriptionUrl(subscribe.subscribe_url);
           }
 
           if (subscribe.device_limit !== undefined) {
