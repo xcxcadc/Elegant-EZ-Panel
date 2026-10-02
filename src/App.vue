@@ -223,6 +223,9 @@ export default {
 <style lang="scss">
 .elegant-app {
   min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
 }
 
 .page-transition-enter-active,

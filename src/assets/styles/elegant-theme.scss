@@ -18,20 +18,42 @@
   --shadow-color: rgba(18, 18, 18, .06);
 }
 
-body {
-  background: #fff !important;
-  color: #141414 !important;
-}
-
 html {
+  min-height: 100%;
   background: #f8fcfb;
 }
 
 body {
-  background: #f8fcfb url('/images/shop-aurora-mint.png') 48% 38% / 148vmax auto fixed no-repeat !important;
+  min-width: 320px;
+  min-height: 100%;
+  background: #f8fcfb !important;
+  color: #141414 !important;
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif !important;
   letter-spacing: -.01em;
+}
+
+.elegant-app::before {
+  content: '';
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+  pointer-events: none;
+  background: #f8fcfb url('/images/shop-aurora-mint.png') 48% 38% / cover no-repeat;
   animation: elegant-global-aurora-drift 34s ease-in-out infinite alternate;
+  transform: translateZ(0);
+}
+
+.elegant-app::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 6% 78%, rgba(66, 203, 176, .18), transparent 30%),
+    radial-gradient(circle at 96% 30%, rgba(79, 145, 214, .16), transparent 32%),
+    radial-gradient(circle at 58% 100%, rgba(244, 190, 102, .14), transparent 34%);
+  opacity: .92;
 }
 
 @keyframes elegant-global-aurora-drift {
@@ -306,7 +328,8 @@ body.dark-theme .elegant-menu__item.active {
 
 .main-board {
   min-height: 100vh !important;
-  background: rgba(255, 255, 255, .62) !important;
+  min-height: 100dvh !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .32), rgba(235, 249, 248, .42)) !important;
 }
 
 .content-area {
@@ -1824,8 +1847,69 @@ body.dark-theme .elegant-menu__item.active {
 
 .plan-card {
   border: 1px solid #dcebe7 !important;
-  background: #fff !important;
+  background: linear-gradient(145deg, rgba(239, 250, 247, .88), rgba(242, 248, 255, .76) 52%, rgba(255, 247, 231, .78)) !important;
   box-shadow: 0 10px 24px rgba(22, 106, 94, .035);
+}
+
+.plans-wrapper .plan-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.plans-wrapper .plan-card::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: url('/images/shop-aurora-mint.png') center / cover no-repeat;
+  opacity: .22;
+  pointer-events: none;
+  transform: scale(1.12);
+}
+
+.plans-wrapper .plan-card:nth-child(3n + 1) {
+  border-color: rgba(126, 201, 224, .58) !important;
+  background: linear-gradient(145deg, rgba(226, 243, 255, .88), rgba(231, 250, 244, .76) 56%, rgba(255, 247, 228, .78)) !important;
+}
+
+.plans-wrapper .plan-card:nth-child(3n + 2) {
+  border-color: rgba(180, 170, 235, .48) !important;
+  background: linear-gradient(145deg, rgba(240, 237, 255, .86), rgba(231, 246, 255, .76) 55%, rgba(237, 251, 246, .78)) !important;
+}
+
+.plans-wrapper .plan-card:nth-child(3n) {
+  border-color: rgba(236, 194, 126, .48) !important;
+  background: linear-gradient(145deg, rgba(255, 247, 228, .86), rgba(238, 250, 246, .78) 55%, rgba(226, 243, 255, .78)) !important;
+}
+
+.plans-wrapper .plan-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.plans-wrapper .plan-card:first-child::before {
+  opacity: .36;
+}
+
+.plans-wrapper .plan-card .discount-calculation {
+  background: rgba(255, 255, 255, .58) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+body:not(.dark-theme) .plans-wrapper .plan-card .btn-purchase {
+  border-color: #128a76 !important;
+  background: #149982 !important;
+  box-shadow: 0 8px 18px rgba(20, 153, 130, .18);
+}
+
+body:not(.dark-theme) .plans-wrapper .plan-card .btn-purchase:hover {
+  border-color: #0f7a69 !important;
+  background: #0f7a69 !important;
+  box-shadow: 0 10px 22px rgba(15, 122, 105, .24);
 }
 
 .plan-card:first-child {
@@ -2204,14 +2288,17 @@ body.dark-theme {
   --theme-hover-color: #71d9c4 !important;
   --shadow-color: rgba(0, 0, 0, .34) !important;
   color-scheme: dark;
-  background-color: #081519 !important;
-  background-image: linear-gradient(rgba(4, 16, 20, .86), rgba(5, 20, 23, .92)), url('/images/shop-aurora-mint.png') !important;
-  background-position: center, 48% 38% !important;
-  background-size: cover, 148vmax auto !important;
-  background-attachment: fixed, fixed !important;
-  background-repeat: no-repeat, no-repeat !important;
-  background-blend-mode: normal, luminosity;
+  background: transparent !important;
   color: #e6f4f0 !important;
+}
+
+body.dark-theme .elegant-app::before {
+  background-color: #081519;
+  background-image: linear-gradient(rgba(4, 16, 20, .86), rgba(5, 20, 23, .92)), url('/images/shop-aurora-mint.png');
+  background-position: center, 48% 38%;
+  background-size: cover, cover;
+  background-repeat: no-repeat, no-repeat;
+  background-blend-mode: normal, luminosity;
 }
 
 body.dark-theme .main-board {
@@ -2711,9 +2798,13 @@ body.dark-theme .notice-modal .notice-content {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body {
+  .elegant-app::before {
     animation: none;
     background-position: 50% 50%;
+  }
+
+  body.dark-theme .elegant-app::before {
+    background-position: center, 50% 50%;
   }
 
   .landing-page .background-decoration {
@@ -5192,5 +5283,201 @@ body.dark-theme .elegant-dashboard .elegant-traffic-alert__icon {
   .elegant-dashboard .elegant-traffic-alert__icon .traffic-depleted-mascot {
     width: 112px;
     height: 78px;
+  }
+}
+
+/* Dark shop surfaces: keep every plan in one readable midnight palette.
+   The light-mode surfboard tints above must never leak into dark mode. */
+body.dark-theme .shop-container .plans-wrapper .plan-card,
+body.dark-theme .shop-container .plans-wrapper .plan-card:nth-child(3n + 1),
+body.dark-theme .shop-container .plans-wrapper .plan-card:nth-child(3n + 2),
+body.dark-theme .shop-container .plans-wrapper .plan-card:nth-child(3n) {
+  border-color: #2e5b61 !important;
+  background: linear-gradient(145deg, rgba(24, 59, 62, .97), rgba(12, 31, 36, .96) 56%, rgba(21, 53, 56, .97)) !important;
+  color: #e4f4f0 !important;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .22);
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card:nth-child(3n + 1) {
+  border-color: #397368 !important;
+  background: linear-gradient(145deg, rgba(31, 76, 72, .98), rgba(13, 42, 44, .96) 58%, rgba(22, 61, 59, .98)) !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card:nth-child(3n + 2) {
+  border-color: #3b6072 !important;
+  background: linear-gradient(145deg, rgba(29, 57, 72, .98), rgba(14, 32, 42, .96) 58%, rgba(22, 55, 63, .98)) !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card:nth-child(3n) {
+  border-color: #6c6548 !important;
+  background: linear-gradient(145deg, rgba(67, 62, 43, .98), rgba(24, 39, 42, .96) 58%, rgba(23, 59, 58, .98)) !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card::before {
+  opacity: .13 !important;
+  filter: brightness(.48) saturate(.72);
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card:first-child::before {
+  opacity: .2 !important;
+  filter: brightness(.52) saturate(.82);
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .card-header {
+  border-bottom-color: rgba(143, 205, 193, .24) !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .card-title,
+body.dark-theme .shop-container .plans-wrapper .plan-card .currency,
+body.dark-theme .shop-container .plans-wrapper .plan-card .amount,
+body.dark-theme .shop-container .plans-wrapper .plan-card .feature-item > span {
+  color: #e4f4f0 !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .period,
+body.dark-theme .shop-container .plans-wrapper .plan-card .feature-item .disabled-text {
+  color: #9cbab5 !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .period-tag {
+  border-color: #3a6268 !important;
+  background: rgba(8, 27, 32, .76) !important;
+  color: #b5d5cf !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .period-tag:hover:not(.disabled),
+body.dark-theme .shop-container .plans-wrapper .plan-card .period-tag.active {
+  border-color: #49cbb0 !important;
+  background: rgba(73, 203, 176, .18) !important;
+  color: #b7f4e5 !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .period-tag.disabled {
+  border-color: #31484d !important;
+  background: rgba(9, 24, 28, .64) !important;
+  color: #78918d !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .period-tag .tag-icon.check {
+  color: #70dec3 !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .period-tag .tag-icon.error {
+  color: #ee9595 !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .discount-calculation,
+body.dark-theme .shop-container .plans-wrapper .plan-card:first-child .discount-calculation {
+  border-color: #3e6f70 !important;
+  background: linear-gradient(135deg, rgba(11, 33, 37, .86), rgba(29, 67, 65, .72)) !important;
+  color: #d3ebe5 !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .discount-info,
+body.dark-theme .shop-container .plans-wrapper .plan-card .discount-label,
+body.dark-theme .shop-container .plans-wrapper .plan-card .saving-text {
+  color: #c5ded8 !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .discount-info .period-name,
+body.dark-theme .shop-container .plans-wrapper .plan-card .discount-info .discount-value,
+body.dark-theme .shop-container .plans-wrapper .plan-card .discount-info .saving-amount {
+  color: #72ddc2 !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .feature-icon.enabled {
+  color: #70dec3 !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .feature-icon.disabled {
+  color: #718c89 !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .card-badge.stock-plenty {
+  border-color: rgba(110, 222, 195, .42) !important;
+  background: rgba(73, 203, 176, .16) !important;
+  color: #a9efdf !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .card-badge.stock-warning {
+  border-color: rgba(239, 194, 105, .46) !important;
+  background: rgba(206, 150, 51, .16) !important;
+  color: #f3d28e !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .card-badge.stock-danger {
+  border-color: rgba(239, 133, 133, .46) !important;
+  background: rgba(184, 66, 66, .18) !important;
+  color: #ffb0aa !important;
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .btn-purchase,
+body.dark-theme .shop-container .plans-wrapper .plan-card .btn-purchase:hover {
+  border-color: #49cbb0 !important;
+  background: #238f7c !important;
+  color: #f2fffb !important;
+  box-shadow: 0 9px 20px rgba(73, 203, 176, .2);
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .btn-purchase:hover {
+  background: #35ac96 !important;
+  box-shadow: 0 11px 24px rgba(73, 203, 176, .28);
+}
+
+body.dark-theme .shop-container .plans-wrapper .plan-card .btn-purchase.btn-disabled,
+body.dark-theme .shop-container .plans-wrapper .plan-card .btn-purchase.btn-disabled:hover {
+  border-color: #36565a !important;
+  background: #1c3d42 !important;
+  color: #88a19d !important;
+  box-shadow: none;
+}
+
+/* Global aurora coverage: keep the same theme behind every authenticated route.
+   Content cards remain opaque enough for reading; only the page shell is softened. */
+body:not(.dark-theme) .elegant-app::before {
+  background-color: #f5fbfa;
+  background-position: 48% 38%;
+  background-size: cover;
+}
+
+body:not(.dark-theme) .elegant-app::after {
+  background:
+    radial-gradient(circle at 5% 78%, rgba(54, 191, 166, .26), transparent 31%),
+    radial-gradient(circle at 95% 30%, rgba(79, 145, 214, .22), transparent 33%),
+    radial-gradient(circle at 58% 100%, rgba(245, 190, 101, .18), transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(229, 247, 244, .16));
+  opacity: .98;
+}
+
+body:not(.dark-theme) .main-board {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, .14), rgba(224, 246, 244, .20) 52%, rgba(225, 238, 253, .16)) !important;
+}
+
+body:not(.dark-theme) .static-layout {
+  background: linear-gradient(180deg, rgba(248, 252, 251, .20), rgba(248, 252, 251, 0)) !important;
+}
+
+body:not(.dark-theme) .dashboard-container,
+body:not(.dark-theme) .shop-container,
+body:not(.dark-theme) .nodes-container,
+body:not(.dark-theme) .orders-container,
+body:not(.dark-theme) .account-container,
+body:not(.dark-theme) .ticket-container,
+body:not(.dark-theme) .docs-container,
+body:not(.dark-theme) .profile-container,
+body:not(.dark-theme) .trafficlog-container,
+body:not(.dark-theme) .deposit-container,
+body:not(.dark-theme) .more-container {
+  background: transparent !important;
+}
+
+@media (max-width: 768px) {
+  body:not(.dark-theme) .elegant-app::before {
+    background-position: 56% 42%;
+  }
+
+  body:not(.dark-theme) .main-board {
+    background: linear-gradient(160deg, rgba(255, 255, 255, .10), rgba(224, 246, 244, .18) 58%, rgba(225, 238, 253, .14)) !important;
   }
 }
