@@ -4,6 +4,20 @@
 
 import {getAvailableApiUrl} from '@/utils/apiAvailabilityChecker';
 
+// 接受完整 URL、协议相对 URL 或裸域名，避免 CDN 配置把中间件域名拼成前端路径。
+export const normalizeMiddlewareUrl = value => {
+    const rawUrl = String(value || '').trim().replace(/\/+$/g, '');
+    if (!rawUrl) return '';
+
+    const currentProtocol = typeof window !== 'undefined' && window.location?.protocol
+        ? window.location.protocol
+        : 'https:';
+
+    if (rawUrl.startsWith('//')) return `${currentProtocol}${rawUrl}`;
+    if (/^https?:\/\//i.test(rawUrl)) return rawUrl;
+    return `${currentProtocol}//${rawUrl}`;
+};
+
 const getConfig = (key, defaultValue) => {
     if (typeof window !== 'undefined' && window.CHONGLANGBAN_CONFIG && window.CHONGLANGBAN_CONFIG[key] !== undefined) {
         return window.CHONGLANGBAN_CONFIG[key];
@@ -57,7 +71,8 @@ export const getApiBaseUrl = () => {
         // 首先检查是否启用中间件代理
         if (window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_ENABLED === true && window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_URL) {
             // 使用中间件URL和路径
-            const middlewareUrl = window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_URL.trim();
+            const middlewareUrl = normalizeMiddlewareUrl(window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_URL);
+            if (!middlewareUrl) return '';
             const middlewarePath = window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_PATH;
 
             // 确保URL末尾没有斜杠，且路径开头有斜杠，防止出现重复或缺少斜杠

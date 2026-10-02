@@ -25,4 +25,10 @@ describe('middleware encryption helpers', () => {
     expect(first).toMatch(/^[0-9a-f]{16}$/i);
     expect(randomIv()).toBe(first);
   });
+
+  it('normalizes a bare middleware domain instead of treating it as a panel path', async () => {
+    window.CHONGLANGBAN_CONFIG.API_MIDDLEWARE_URL = 'rosso.qnno.de';
+    const url = await getProtectedSubscriptionUrl('/sub/example');
+    expect(url).toMatch(/^https:\/\/rosso\.qnno\.de\/clb\/clb\/v2\./);
+  });
 });

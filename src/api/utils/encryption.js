@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js";
+import { normalizeMiddlewareUrl } from '@/utils/baseConfig';
 
 const LEGACY_PROTOCOL = 'legacy';
 const AEAD_PROTOCOL = 'aead';
@@ -144,7 +145,7 @@ export async function getProtectedSubscriptionUrl(rawUrl) {
   }
   const config = getConfig();
   const parsed = new URL(rawUrl, window.location.origin);
-  const middlewareUrl = String(config.API_MIDDLEWARE_URL || '').replace(/\/+$/g, '');
+  const middlewareUrl = normalizeMiddlewareUrl(config.API_MIDDLEWARE_URL);
   const middlewarePath = String(config.API_MIDDLEWARE_PATH || '').replace(/^\/+|\/+$/g, '');
   if (!middlewareUrl || !middlewarePath) {
     throw new Error('AES-GCM 订阅链接缺少中间件地址或路径配置');
