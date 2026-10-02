@@ -178,14 +178,14 @@ export default {
   }
   
   &.toast-info {
-    border-left: 4px solid var(--info-color);
+    border-left: 4px solid var(--theme-color, var(--info-color));
     
     .toast-icon {
-      color: var(--info-color);
+      color: var(--theme-color, var(--info-color));
     }
     
     .toast-progress-bar {
-      background-color: var(--info-color);
+      background-color: var(--theme-color, var(--info-color));
     }
   }
 }

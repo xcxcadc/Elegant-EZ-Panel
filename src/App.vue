@@ -246,8 +246,17 @@ export default {
 }
 
 #nprogress .bar {
-  background: #36a88f;
+  background: var(--theme-color, #36a88f);
   height: 2px;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px var(--theme-color, #36a88f), 0 0 5px var(--theme-color, #36a88f);
+}
+
+#nprogress .spinner-icon {
+  border-top-color: var(--theme-color, #36a88f);
+  border-left-color: var(--theme-color, #36a88f);
 }
 
 @media (prefers-reduced-motion: reduce) {
