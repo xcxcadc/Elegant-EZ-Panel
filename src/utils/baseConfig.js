@@ -634,16 +634,16 @@ export const BACKGROUND_BALLS_CONFIG = getConfig('BACKGROUND_BALLS_CONFIG', DEFA
  * 控制哪些浏览器被禁止访问网站
  */
 const DEFAULT_BROWSER_RESTRICT_CONFIG = {
-    // 是否启用浏览器限制功能
+    // 是否启用浏览器限制功能（默认关闭，允许所有浏览器访问）
     enabled: false,
 
     // 各浏览器是否被限制访问（true=限制访问，false=允许访问）
     restrictBrowsers: {
-        '360': true,     // 360浏览器
-        'QQ': true,      // QQ浏览器
-        'WeChat': true,  // 微信内置浏览器
-        'Baidu': true,   // 百度浏览器
-        'Sogou': true,   // 搜狗浏览器
+        '360': false,    // 360浏览器
+        'QQ': false,     // QQ浏览器
+        'WeChat': false, // 微信内置浏览器
+        'Baidu': false,  // 百度浏览器
+        'Sogou': false,  // 搜狗浏览器
         'UC': false,     // UC浏览器
         'Maxthon': false // 傲游浏览器
     },
