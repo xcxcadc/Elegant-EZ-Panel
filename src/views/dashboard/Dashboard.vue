@@ -50,49 +50,118 @@
         </button>
       </section>
 
-      <div class="elegant-dashboard__grid">
+      <div class="elegant-dashboard__primary">
         <section class="elegant-card elegant-plan-card">
-          <div class="elegant-card__head">
-            <div>
+          <div class="elegant-package-header">
+            <div class="elegant-package-heading">
               <span class="elegant-label">套餐详情</span>
-              <h2>{{ userPlan.name || $t('dashboard.noSubscription') }}</h2>
+              <div class="elegant-package-title-row">
+                <h2>{{ userPlan.name || $t('dashboard.noSubscription') }}</h2>
+                <span class="elegant-status" :class="{ danger: isExpired, warning: isExpiringSoon && !isExpired }">
+                  {{ isExpired ? '已过期' : (isExpiringSoon ? '即将到期' : '使用中') }}
+                </span>
+              </div>
+              <p>包含高速数据流量，支持多端使用，满足您的上网需求。</p>
             </div>
-            <span class="elegant-status" :class="{ danger: isExpired, warning: isExpiringSoon && !isExpired }">
-              {{ isExpired ? '已过期' : (isExpiringSoon ? '即将到期' : '使用中') }}
-            </span>
-          </div>
-          <div v-if="isTrafficDepleted" class="elegant-plan-depleted" role="status">
-            <TrafficDepletedMascot class="elegant-plan-depleted__mascot" />
-            <span class="elegant-plan-depleted__copy">
-              <strong>本周期流量用完啦</strong>
-              <small>小云提醒：购买流量包，或开启下一个流量周期。</small>
-            </span>
-            <i class="elegant-plan-depleted__pulse" aria-hidden="true"></i>
-          </div>
-          <div class="elegant-usage">
-            <div class="elegant-usage__ring" :style="{ '--progress': `${Math.max(0, Math.min(100, trafficPercentage))}%` }">
-              <div><strong>{{ trafficPercentage }}%</strong><span>已用比例</span></div>
-            </div>
-            <div class="elegant-usage__meta">
-              <div><span>总流量</span><strong>{{ userPlan.totalTraffic || '0 B' }}</strong></div>
-              <div><span>已用流量</span><strong>{{ userPlan.usedTraffic || '0 B' }}</strong></div>
-              <div><span>剩余流量</span><strong>{{ userStats.remainingTraffic || '0 B' }}</strong></div>
-              <div><span>套餐名字</span><strong>{{ userPlan.name || '—' }}</strong></div>
-              <div><span>到期日期</span><strong>{{ userPlan.isExpireDatePermanent ? '长期有效' : (userPlan.expireDate || '—') }}</strong></div>
-              <div><span>在线客户端</span><strong>{{ onlineClientDisplay }}</strong></div>
+            <div class="elegant-package-period">
+              <IconCalendar :size="18" />
+              <span>{{ userPlan.isExpireDatePermanent ? '长期有效' : (userPlan.expireDate || '—') }}</span>
             </div>
           </div>
+
+          <div class="elegant-package-metrics">
+            <div class="elegant-package-metric elegant-package-metric--used">
+              <div class="elegant-package-metric__head">
+                <span class="elegant-package-metric__icon"><IconWaveSawTool :size="20" /></span>
+                <span>已用流量</span>
+                <strong>{{ userPlan.usedTraffic || '0 B' }}<small> / {{ userPlan.totalTraffic || '0 B' }}</small></strong>
+              </div>
+              <div class="elegant-package-progress" role="progressbar" :aria-valuenow="trafficPercentage" aria-valuemin="0" aria-valuemax="100" :aria-label="`已用流量 ${trafficPercentage}%`">
+                <i :style="{ width: `${Math.max(0, Math.min(100, trafficPercentage))}%` }"></i>
+              </div>
+              <small class="elegant-package-metric__hint">{{ trafficPercentage }}% 已用</small>
+            </div>
+            <div class="elegant-package-metric elegant-package-metric--total">
+              <span class="elegant-package-metric__icon"><IconPackage :size="20" /></span>
+              <span>总流量</span>
+              <strong>{{ userPlan.totalTraffic || '0 B' }}</strong>
+            </div>
+            <div class="elegant-package-metric elegant-package-metric--remaining">
+              <span class="elegant-package-metric__icon"><IconWallet :size="20" /></span>
+              <span>剩余流量</span>
+              <strong>{{ userStats.remainingTraffic || '0 B' }}</strong>
+              <small>{{ remainingTrafficPercentage }}% 剩余</small>
+            </div>
+            <div class="elegant-package-metric elegant-package-metric--expiry">
+              <span class="elegant-package-metric__icon"><IconCalendar :size="20" /></span>
+              <span>到期日期</span>
+              <strong>{{ userPlan.isExpireDatePermanent ? '长期有效' : (userPlan.expireDate || '—') }}</strong>
+              <small>在线客户端：{{ onlineClientDisplay }}</small>
+            </div>
+          </div>
+
           <div class="elegant-card__actions">
             <button type="button" class="elegant-button elegant-button--primary" @click="toggleImportCard"><IconShare :size="15" /> {{ $t('dashboard.importSubscription') }}</button>
             <button type="button" class="elegant-button" @click="renewPlan"><IconShoppingCart :size="15" /> {{ $t('dashboard.renewPlan') }}</button>
           </div>
         </section>
 
+        <section
+          v-if="isTrafficDepleted"
+          class="elegant-traffic-alert elegant-traffic-alert--danger"
+          role="alert"
+        >
+          <div class="elegant-traffic-alert__copy">
+            <span class="elegant-traffic-alert__icon"><TrafficDepletedMascot /></span>
+            <div>
+              <strong>{{ $t('dashboard.trafficDepletedTitle') }}</strong>
+              <p>{{ $t('dashboard.trafficDepletedDescription') }}</p>
+            </div>
+          </div>
+          <div class="elegant-traffic-alert__actions">
+            <button
+              v-if="showResetTrafficButton"
+              type="button"
+              class="elegant-button elegant-button--danger"
+              @click="openResetTrafficModal"
+            >
+              <IconRefresh :size="15" />
+              {{ $t('dashboard.purchaseResetTraffic') }}
+            </button>
+            <button
+              v-if="canActivateNewPeriod"
+              type="button"
+              class="elegant-button elegant-button--warning"
+              @click.stop.prevent="openNextPeriodDialog"
+            >
+              <IconCalendarPlus :size="15" />
+              {{ $t('dashboard.activateDataCycleInAdvance') }}
+            </button>
+            <button
+              v-if="!showResetTrafficButton && !canActivateNewPeriod"
+              type="button"
+              class="elegant-button elegant-button--warning"
+              @click="goToShop"
+            >
+              <IconShoppingCart :size="15" />
+              前往商店
+            </button>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="elegant-dashboard__grid">
+
         <section class="elegant-card elegant-legacy-summary-card">
           <div class="elegant-card__head"><span class="elegant-label">账户概览</span><IconWallet :size="20" /></div>
-          <button type="button" class="elegant-summary-row elegant-summary-action" @click="toggleImportCard"><span>订阅导入</span><strong>{{ userPlan.subscribeUrl ? '已生成' : '待生成' }} <IconChevronRight :size="13" /></strong></button>
-          <div class="elegant-summary-row"><span>{{ $t('dashboard.remainingDays') }}</span><strong>{{ userStats.remainingDays || '—' }}<small>{{ userStats.isRemainingDaysPermanent ? '' : ' 天' }}</small></strong></div>
-          <div class="elegant-summary-row"><span>{{ $t('dashboard.accountBalance') }}</span><strong>{{ userStats.accountBalance || `${currencySymbol}0.00` }}</strong></div>
+          <div class="elegant-summary-metrics">
+            <div class="elegant-summary-metric elegant-summary-metric--blue"><span class="elegant-summary-metric__icon"><IconPackage :size="17" /></span><span>总流量</span><strong>{{ userPlan.totalTraffic || '0 B' }}</strong></div>
+            <div class="elegant-summary-metric elegant-summary-metric--lilac"><span class="elegant-summary-metric__icon"><IconWaveSawTool :size="17" /></span><span>已用流量</span><strong>{{ userPlan.usedTraffic || '0 B' }}</strong></div>
+            <div class="elegant-summary-metric elegant-summary-metric--mint"><span class="elegant-summary-metric__icon"><IconWallet :size="17" /></span><span>剩余流量</span><strong>{{ userStats.remainingTraffic || '0 B' }}</strong></div>
+            <div class="elegant-summary-metric elegant-summary-metric--gold"><span class="elegant-summary-metric__icon"><IconCalendar :size="17" /></span><span>到期日期</span><strong>{{ userPlan.isExpireDatePermanent ? '长期有效' : (userPlan.expireDate || '—') }}</strong></div>
+            <div class="elegant-summary-metric elegant-summary-metric--blue"><span class="elegant-summary-metric__icon"><IconDeviceDesktop :size="17" /></span><span>在线客户端</span><strong>{{ onlineClientDisplay }}</strong></div>
+          </div>
           <button type="button" class="elegant-inline-link" @click="navigateToDeposit">查看账户与充值 <IconChevronRight :size="15" /></button>
         </section>
 
@@ -141,49 +210,6 @@
           </div>
         </section>
       </div>
-
-      <section
-        v-if="isTrafficDepleted"
-        class="elegant-traffic-alert elegant-traffic-alert--danger"
-        role="alert"
-      >
-        <div class="elegant-traffic-alert__copy">
-          <span class="elegant-traffic-alert__icon"><TrafficDepletedMascot /></span>
-          <div>
-            <strong>{{ $t('dashboard.trafficDepletedTitle') }}</strong>
-            <p>{{ $t('dashboard.trafficDepletedDescription') }}</p>
-          </div>
-        </div>
-        <div class="elegant-traffic-alert__actions">
-          <button
-            v-if="showResetTrafficButton"
-            type="button"
-            class="elegant-button elegant-button--danger"
-            @click="openResetTrafficModal"
-          >
-            <IconRefresh :size="15" />
-            {{ $t('dashboard.purchaseResetTraffic') }}
-          </button>
-          <button
-            v-if="canActivateNewPeriod"
-            type="button"
-            class="elegant-button elegant-button--warning"
-            @click.stop.prevent="openNextPeriodDialog"
-          >
-            <IconCalendarPlus :size="15" />
-            {{ $t('dashboard.activateDataCycleInAdvance') }}
-          </button>
-          <button
-            v-if="!showResetTrafficButton && !canActivateNewPeriod"
-            type="button"
-            class="elegant-button elegant-button--warning"
-            @click="goToShop"
-          >
-            <IconShoppingCart :size="15" />
-            前往商店
-          </button>
-        </div>
-      </section>
 
       <section v-if="isLowTraffic" class="elegant-dashboard-alert elegant-dashboard-alert--warning" role="alert">
         <div class="elegant-dashboard-alert__copy">
