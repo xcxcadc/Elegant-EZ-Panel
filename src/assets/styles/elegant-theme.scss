@@ -4983,3 +4983,214 @@ body.dark-theme .elegant-dashboard .elegant-traffic-alert {
     width: 100%;
   }
 }
+
+/* Match the selected reference scale on wide desktop screens. The previous
+   max-width kept the correct structure but made the complete dashboard look
+   like a narrow preview in a large viewport. */
+@media (min-width: 1200px) {
+  .content-area:has(.elegant-dashboard) {
+    width: min(1760px, calc(100vw - 96px)) !important;
+    max-width: 1760px !important;
+  }
+
+  .elegant-dashboard {
+    max-width: 1760px;
+    padding-right: clamp(40px, 3.5vw, 72px);
+    padding-left: clamp(40px, 3.5vw, 72px);
+  }
+
+  .elegant-dashboard__primary,
+  .elegant-dashboard__grid {
+    gap: 24px !important;
+  }
+
+  .elegant-dashboard .elegant-plan-card {
+    padding: 38px;
+    border-radius: 28px;
+  }
+
+  .elegant-package-title-row {
+    gap: 16px;
+  }
+
+  .elegant-package-title-row h2 {
+    font-size: 36px !important;
+  }
+
+  .elegant-package-heading p {
+    margin-top: 12px;
+    font-size: 15px;
+  }
+
+  .elegant-package-period {
+    min-height: 50px;
+    padding-inline: 17px;
+    font-size: 14px;
+  }
+
+  .elegant-package-metrics {
+    margin-top: 28px;
+    gap: 16px;
+  }
+
+  .elegant-package-metric {
+    min-height: 156px;
+    padding: 24px;
+    border-radius: 20px;
+  }
+
+  .elegant-package-metric__head {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    gap: 13px;
+  }
+
+  .elegant-package-metric__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+  }
+
+  .elegant-package-metric > span:not(.elegant-package-metric__icon),
+  .elegant-package-metric__head > span:not(.elegant-package-metric__icon) {
+    font-size: 14px;
+  }
+
+  .elegant-package-metric strong {
+    font-size: 28px;
+  }
+
+  .elegant-package-metric strong small {
+    font-size: 14px;
+  }
+
+  .elegant-package-metric > small {
+    font-size: 13px;
+  }
+
+  .elegant-package-progress {
+    height: 11px;
+  }
+
+  .elegant-dashboard .elegant-plan-card .elegant-card__actions {
+    margin-top: 26px;
+    padding-top: 24px;
+  }
+
+  .elegant-dashboard .elegant-button,
+  .elegant-dashboard .elegant-traffic-alert__actions .elegant-button {
+    min-height: 48px;
+    padding-inline: 20px;
+    font-size: 14px;
+  }
+
+  .elegant-dashboard .elegant-legacy-summary-card,
+  .elegant-dashboard .elegant-detail-card,
+  .elegant-dashboard .elegant-activity-card {
+    min-height: 460px;
+    padding: 30px;
+    border-radius: 24px;
+  }
+
+  .elegant-summary-metrics {
+    gap: 12px;
+  }
+
+  .elegant-summary-metric {
+    min-height: 60px;
+    padding: 8px 14px 8px 10px;
+    grid-template-columns: 42px minmax(0, 1fr) max-content;
+    gap: 12px;
+    border-radius: 14px;
+  }
+
+  .elegant-summary-metric__icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
+
+  .elegant-summary-metric > span:not(.elegant-summary-metric__icon) {
+    font-size: 13px;
+  }
+
+  .elegant-summary-metric strong {
+    font-size: 15px;
+  }
+
+  .elegant-dashboard .elegant-detail-row {
+    min-height: 82px;
+    padding: 18px 0;
+  }
+
+  .elegant-dashboard .elegant-traffic-alert {
+    min-height: 116px;
+    border-radius: 22px;
+  }
+}
+
+/* Use the same friendly cloud mascot as the selected reference artwork. The
+   illustration is intentionally part of the alert composition rather than a
+   tiny status glyph, while the compact breakpoints keep the copy readable. */
+.elegant-dashboard .elegant-traffic-alert {
+  overflow: hidden;
+  background: linear-gradient(105deg, rgba(255, 247, 237, .98), rgba(255, 251, 244, .95));
+  border-color: rgba(225, 164, 109, .4);
+}
+
+.elegant-dashboard .elegant-traffic-alert__copy {
+  flex: 1 1 auto;
+  gap: 18px;
+}
+
+.elegant-dashboard .elegant-traffic-alert__icon {
+  width: 172px;
+  height: 108px;
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  border-radius: 0;
+  background: transparent;
+}
+
+.elegant-dashboard .elegant-traffic-alert__icon .traffic-depleted-mascot {
+  width: 172px;
+  height: 108px;
+}
+
+body.dark-theme .elegant-dashboard .elegant-traffic-alert {
+  background: rgba(var(--theme-color-rgb, 20, 153, 130), .16);
+  border-color: rgba(122, 222, 203, .34);
+}
+
+body.dark-theme .elegant-dashboard .elegant-traffic-alert__icon {
+  background: transparent;
+}
+
+@media (min-width: 1200px) {
+  .elegant-dashboard .elegant-traffic-alert__icon,
+  .elegant-dashboard .elegant-traffic-alert__icon .traffic-depleted-mascot {
+    width: 190px;
+    height: 112px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .elegant-dashboard .elegant-traffic-alert__icon,
+  .elegant-dashboard .elegant-traffic-alert__icon .traffic-depleted-mascot {
+    width: 136px;
+    height: 94px;
+  }
+}
+
+@media (max-width: 700px) {
+  .elegant-dashboard .elegant-traffic-alert__copy {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .elegant-dashboard .elegant-traffic-alert__icon,
+  .elegant-dashboard .elegant-traffic-alert__icon .traffic-depleted-mascot {
+    width: 112px;
+    height: 78px;
+  }
+}
