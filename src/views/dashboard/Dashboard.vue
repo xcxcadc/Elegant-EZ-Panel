@@ -62,10 +62,10 @@
             </span>
           </div>
           <div v-if="isTrafficDepleted" class="elegant-plan-depleted" role="status">
-            <img class="elegant-plan-depleted__gif" src="/images/traffic-depleted.gif" alt="流量耗尽提醒动画" />
+            <TrafficDepletedMascot class="elegant-plan-depleted__mascot" />
             <span class="elegant-plan-depleted__copy">
-              <strong>本周期流量已耗尽</strong>
-              <small>购买流量包，或提前开启下一个流量周期。</small>
+              <strong>本周期流量用完啦</strong>
+              <small>小云提醒：购买流量包，或开启下一个流量周期。</small>
             </span>
             <i class="elegant-plan-depleted__pulse" aria-hidden="true"></i>
           </div>
@@ -148,7 +148,7 @@
         role="alert"
       >
         <div class="elegant-traffic-alert__copy">
-          <span class="elegant-traffic-alert__icon"><IconAlertTriangle :size="19" /></span>
+          <span class="elegant-traffic-alert__icon"><TrafficDepletedMascot /></span>
           <div>
             <strong>{{ $t('dashboard.trafficDepletedTitle') }}</strong>
             <p>{{ $t('dashboard.trafficDepletedDescription') }}</p>
@@ -1071,6 +1071,7 @@ import {
 } from '@tabler/icons-vue';
 import CommonDialog from '@/components/popup/CommonDialog.vue';
 import AppCard from '@/components/common/AppCard.vue';
+import TrafficDepletedMascot from '@/components/common/TrafficDepletedMascot.vue';
 import {getNotices, getSubscribe, getUserConfig, getUserInfo, getUserStats, setNextPeriod} from '@/api/dashboard';
 import {updateRemindSettings} from '@/api/user';
 import {getTrafficLog} from '@/api/trafficLog';
@@ -1191,6 +1192,7 @@ export default {
     IconAlertTriangle,
     IconX,
     IconCalendarPlus,
+    TrafficDepletedMascot,
     AppCard,
     CommonDialog
   },
